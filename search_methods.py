@@ -40,7 +40,7 @@ def get_random_point(seed):
 
 def disturb_point(point):
     # fazer o gausiano
-    return point + 0.05
+    return point + 0.03
 
 
 def evaluate_point(best_result, last_best_result):
@@ -50,7 +50,7 @@ def evaluate_point(best_result, last_best_result):
 
 
 def func_g_x(x):
-    return (2**(-2*(((x-0.1)/0.9)**2)))*((math.sin(5*math.pi*1))**6)
+    return (2**-2*(x-0.1/0.9)**2)*(math.sin(5*math.pi*x))**6
 
 
 def plot_poits(data, data2):
