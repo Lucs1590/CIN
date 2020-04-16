@@ -2,6 +2,8 @@ import random
 import time
 import matplotlib.pyplot as plt
 import math
+import numpy as np
+import pandas as pd
 
 
 def hill_climbing(max_it, min_value):
@@ -39,8 +41,7 @@ def get_random_point(seed):
 
 
 def disturb_point(point):
-    # fazer o gausiano
-    return point + 0.03
+    return float(point + np.random.normal(0, 0.1, 1))
 
 
 def evaluate_point(best_result, last_best_result):
@@ -53,8 +54,11 @@ def func_g_x(x):
     return (2**-2*(x-0.1/0.9)**2)*(math.sin(5*math.pi*x))**6
 
 
-def plot_poits(data, data2):
-    plt.plot(data2)
+def plot_poits(data_cost, data_result):
+    df = pd.DataFrame({'custo': data_cost, 'resultado': data_result})
+    plt.plot('custo', data=df, marker='', color='red')
+    plt.plot('resultado', data=df, marker='', color='green')
+    plt.legend()
     plt.show()
 
 
