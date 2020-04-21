@@ -1,6 +1,7 @@
 import random
 from time import time
-# 1587493971.024905
+# 1587493971.024905 para <
+# 1587503056.092915 para >
 import matplotlib.pyplot as plt
 import math
 import numpy as np
@@ -63,7 +64,6 @@ def hill_climbing(max_it, min_value, seed):
     results_list.append(current_best_result)
 
     while it < max_it:
-        """coment """
         it_repeat += 1 if current_best_result == last_best_result else 0
         if (it_repeat == round(max_it/3)):
             print("Sem melhorias!")
@@ -82,7 +82,7 @@ def hill_climbing(max_it, min_value, seed):
     return current_best_result, cost
 
 
-def simulated_annealing(seed):
+def simulated_annealing(max_it, temperature, seed):
     gc = GenericClass()
 
     it = 0
@@ -91,18 +91,43 @@ def simulated_annealing(seed):
     cost_list = []
     results_list = []
 
-    _temperature = 1
-
     current_best_result = gc.get_random_point(seed)
+    last_best_result = current_best_result
+
+    (current_best_result, cost) = gc.evaluate_point(
+        current_best_result, last_best_result)
+
+    cost_list.append(cost)
+    results_list.append(current_best_result)
+
+    while (it < max_it) or (temperature <= 0.1):
+        it_repeat += 1 if current_best_result == last_best_result else 0
+        if (it_repeat == round(max_it/3)):
+            print("Sem melhorias!")
+            break
+        last_best_result = current_best_result
+        current_best_result = gc.disturb_point(current_best_result)
+        
+        # a diferença do hill climb e do simulated estão exatamente aqui
+        (current_best_result, cost) = gc.evaluate_point(
+            current_best_result, last_best_result)
+
+        cost_list.append(cost)
+        results_list.append(current_best_result)
+
+        it += 1
+    print("Numero máximo de interações atingido!") if max_it == it else ...
+    gc.plot_poits(cost_list, results_list)
+    return current_best_result, cost
 
 
 def main():
-    seed = time()
+    seed = 1587493971.024905
     max_it = 500
     min_value = 0.9
 
     (hc_best_result, hc_cost) = hill_climbing(max_it, min_value, seed)
-    simulated_annealing(seed)
+    # simulated_annealing(max_it, 100, seed)
 
     # GenericClass.format_table()
     # (sa_best_results, sa_cost) = simulated_annealing()
@@ -114,3 +139,4 @@ if __name__ == "__main__":
 
 # Criar tabela
 # Criar classe para hill climbing e simulated anealing
+# evaluate hill e evaluate simulated em suas devidas classes
