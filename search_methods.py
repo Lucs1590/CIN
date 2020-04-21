@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 import pandas as pd
+from terminaltables import AsciiTable
 
 
 class GenericClass(object):
@@ -37,6 +38,10 @@ class GenericClass(object):
         plt.xlabel("Interações")
         plt.ylabel("Resultados")
         plt.show()
+
+    def format_table(self, args, kwargs):
+        table = AsciiTable(args)
+        print(table.table)
 
 
 def hill_climbing(max_it, min_value):
@@ -76,9 +81,8 @@ def hill_climbing(max_it, min_value):
 
 
 def main():
-    (best_result, cost) = hill_climbing(500, 0.9)
-    print("Melhor Resultado:", best_result)
-    print("Custo: ", cost)
+    (hc_best_result, hc_cost) = hill_climbing(500, 0.9)
+    # GenericClass.format_table()
 
 
 if __name__ == "__main__":
