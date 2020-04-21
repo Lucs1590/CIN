@@ -7,6 +7,38 @@ import numpy as np
 import pandas as pd
 
 
+class GenericClass(object):
+
+    def get_random_point(self, seed):
+        print(seed)
+        random.seed(seed)
+        return round(random.random(), 2)
+
+    def disturb_point(self, point):
+        return float(point + abs(np.random.normal(0, 0.001, 1)))
+
+    def evaluate_point(self, best_result, last_best_result):
+        current_cost = self.func_g_x(best_result)
+        last_cost = self.func_g_x(last_best_result)
+        return (best_result, current_cost) if last_cost < current_cost else (last_best_result, last_cost)
+
+    def func_g_x(self, x):
+        return (2**-2*(x-0.1/0.9)**2)*(math.sin(5*math.pi*x))**6
+
+    def plot_poits(self, data_cost, data_result):
+        df = pd.DataFrame({"custo": data_cost, "resultado": data_result})
+        plt.subplot(211)
+        plt.plot("custo", data=df, color="red")
+        plt.title("Custo e Resultado")
+        plt.ylabel("Custo")
+
+        plt.subplot(212)
+        plt.plot("resultado", data=df, color="green")
+        plt.xlabel("Interações")
+        plt.ylabel("Resultados")
+        plt.show()
+
+
 def hill_climbing(max_it, min_value):
     it = 0
     it_repeat = 0
@@ -41,38 +73,6 @@ def hill_climbing(max_it, min_value):
     print("Numero máximo de interações atingido") if max_it - 1 == it else ...
     gc.plot_poits(cost_list, results_list)
     return current_best_result, cost
-
-
-class GenericClass(object):
-
-    def get_random_point(self, seed):
-        print(seed)
-        random.seed(seed)
-        return round(random.random(), 2)
-
-    def disturb_point(self, point):
-        return float(point + abs(np.random.normal(0, 0.001, 1)))
-
-    def evaluate_point(self, best_result, last_best_result):
-        current_cost = self.func_g_x(best_result)
-        last_cost = self.func_g_x(last_best_result)
-        return (best_result, current_cost) if last_cost < current_cost else (last_best_result, last_cost)
-
-    def func_g_x(self, x):
-        return (2**-2*(x-0.1/0.9)**2)*(math.sin(5*math.pi*x))**6
-
-    def plot_poits(self, data_cost, data_result):
-        df = pd.DataFrame({"custo": data_cost, "resultado": data_result})
-        plt.subplot(211)
-        plt.plot("custo", data=df, color="red")
-        plt.title("Custo e Resultado")
-        plt.ylabel("Custo")
-
-        plt.subplot(212)
-        plt.plot("resultado", data=df, color="green")
-        plt.xlabel("Interações")
-        plt.ylabel("Resultados")
-        plt.show()
 
 
 def main():
