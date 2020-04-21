@@ -44,14 +44,16 @@ class GenericClass(object):
         print(table.table)
 
 
-def hill_climbing(max_it, min_value):
+def hill_climbing(max_it, min_value, seed):
+    gc = GenericClass()
+
     it = 0
     it_repeat = 0
     cost = 0
     cost_list = []
     results_list = []
-    gc = GenericClass()
-    current_best_result = gc.get_random_point(time())
+
+    current_best_result = gc.get_random_point(seed)
     last_best_result = current_best_result
 
     (current_best_result, cost) = gc.evaluate_point(
@@ -80,9 +82,30 @@ def hill_climbing(max_it, min_value):
     return current_best_result, cost
 
 
+def simulated_annealing(seed):
+    gc = GenericClass()
+
+    it = 0
+    it_repeat = 0
+    cost = 0
+    cost_list = []
+    results_list = []
+
+    _temperature = 1
+
+    current_best_result = gc.get_random_point(seed)
+
+
 def main():
-    (hc_best_result, hc_cost) = hill_climbing(500, 0.9)
+    seed = time()
+    max_it = 500
+    min_value = 0.9
+
+    (hc_best_result, hc_cost) = hill_climbing(max_it, min_value, seed)
+    simulated_annealing(seed)
+
     # GenericClass.format_table()
+    # (sa_best_results, sa_cost) = simulated_annealing()
 
 
 if __name__ == "__main__":
