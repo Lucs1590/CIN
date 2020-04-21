@@ -58,7 +58,7 @@ def hill_climbing(max_it, min_value):
     while it < max_it:
         """coment """
         it_repeat += 1 if current_best_result == last_best_result else 0
-        if (it_repeat == (max_it/4)):
+        if (it_repeat == round(max_it/3)):
             print("Sem melhorias!")
             break
         last_best_result = current_best_result
@@ -70,7 +70,7 @@ def hill_climbing(max_it, min_value):
         results_list.append(current_best_result)
 
         it += 1
-    print("Numero máximo de interações atingido") if max_it - 1 == it else ...
+    print("Numero máximo de interações atingido!") if max_it == it else ...
     gc.plot_poits(cost_list, results_list)
     return current_best_result, cost
 
