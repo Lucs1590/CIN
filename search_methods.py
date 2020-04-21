@@ -110,3 +110,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+# Criar tabela
+# Criar classe para hill climbing e simulated anealing
