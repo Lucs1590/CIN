@@ -44,19 +44,16 @@ class GenericClass(object):
         table = AsciiTable(formated_table)
         print(table.table)
 
+    def set_default_values(self):
+        return (0, 0, 0, [], [])
+
 
 class HillClimbing(object):
 
     def __init__(self):
         self.gc = GenericClass()
-        self.set_default_values()
-
-    def set_default_values(self):
-        self.it = 0
-        self.it_repeat = 0
-        self.cost = 0
-        self.cost_list = []
-        self.results_list = []
+        (self.it, self.it_repeat, self.cost, self.cost_list,
+         self.results_list) = self.gc.set_default_values()
 
     def run_hill_climbing(self, max_it, min_value, seed):
         current_best_result = self.gc.get_random_point(seed)
