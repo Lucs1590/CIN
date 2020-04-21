@@ -19,11 +19,6 @@ class GenericClass(object):
     def disturb_point(self, point):
         return float(point + abs(np.random.normal(0, 0.001, 1)))
 
-    def evaluate_point(self, best_result, last_best_result):
-        current_cost = self.func_g_x(best_result)
-        last_cost = self.func_g_x(last_best_result)
-        return (best_result, current_cost) if last_cost < current_cost else (last_best_result, last_cost)
-
     def func_g_x(self, x):
         return (2**-2*(x-0.1/0.9)**2)*(math.sin(5*math.pi*x))**6
 
@@ -50,41 +45,52 @@ class GenericClass(object):
         print(table.table)
 
 
-def hill_climbing(max_it, min_value, seed):
-    gc = GenericClass()
+class HillClimbing(object):
 
-    it = 0
-    it_repeat = 0
-    cost = 0
-    cost_list = []
-    results_list = []
+    def __init__(self):
+        self.gc = GenericClass()
+        self.set_default_values()
 
-    current_best_result = gc.get_random_point(seed)
-    last_best_result = current_best_result
+    def set_default_values(self):
+        self.it = 0
+        self.it_repeat = 0
+        self.cost = 0
+        self.cost_list = []
+        self.results_list = []
 
-    (current_best_result, cost) = gc.evaluate_point(
-        current_best_result, last_best_result)
-
-    cost_list.append(cost)
-    results_list.append(current_best_result)
-
-    while it < max_it:
-        it_repeat += 1 if current_best_result == last_best_result else 0
-        if (it_repeat == round(max_it/3)):
-            print("(HC) Motivo de parada: Sem melhorias!")
-            break
+    def run_hill_climbing(self, max_it, min_value, seed):
+        current_best_result = self.gc.get_random_point(seed)
         last_best_result = current_best_result
-        current_best_result = gc.disturb_point(current_best_result)
-        (current_best_result, cost) = gc.evaluate_point(
+
+        (current_best_result, cost) = self.evaluate_point(
             current_best_result, last_best_result)
 
-        cost_list.append(cost)
-        results_list.append(current_best_result)
+        self.cost_list.append(cost)
+        self.results_list.append(current_best_result)
 
-        it += 1
-    print("(HC) Motivo de parada: Número máximo de interações atingido!") if max_it == it else ...
-    gc.plot_poits(cost_list, results_list)
-    return current_best_result, cost
+        while self.it < max_it:
+            self.it_repeat += 1 if current_best_result == last_best_result else 0
+            if (self.it_repeat == round(max_it/3)):
+                print("(HC) Motivo de parada: Sem melhorias!")
+                break
+            last_best_result = current_best_result
+            current_best_result = self.gc.disturb_point(current_best_result)
+            (current_best_result, cost) = self.evaluate_point(
+                current_best_result, last_best_result)
+
+            self.cost_list.append(cost)
+            self.results_list.append(current_best_result)
+
+            self.it += 1
+        print(
+            "(HC) Motivo de parada: Número máximo de interações atingido!") if max_it == self.it else ...
+        self.gc.plot_poits(self.cost_list, self.results_list)
+        return current_best_result, cost
+
+    def evaluate_point(self, best_result, last_best_result):
+        current_cost = self.gc.func_g_x(best_result)
+        last_cost = self.gc.func_g_x(last_best_result)
+        return (best_result, current_cost) if last_cost < current_cost else (last_best_result, last_cost)
 
 
 def simulated_annealing(max_it, temperature, seed):
@@ -130,8 +136,9 @@ def main():
     seed = 1587493971.024905
     max_it = 500
     min_value = 0.9
+    hc = HillClimbing()
 
-    (hc_best_result, hc_cost) = hill_climbing(max_it, min_value, seed)
+    (hc_best_result, hc_cost) = hc.run_hill_climbing(max_it, min_value, seed)
     # simulated_annealing(max_it, 100, seed)
     GenericClass.format_table(
         GenericClass, hc_best_result, hc_cost, 0, 0)  # sa_best_result, sa_cost)
@@ -142,5 +149,4 @@ def main():
 if __name__ == "__main__":
     main()
 
-# Criar classe para hill climbing e simulated anealing
-# evaluate hill e evaluate simulated em suas devidas classes
+# Criar classe para simulated anealing e evaluate simulated
