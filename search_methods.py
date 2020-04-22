@@ -132,6 +132,7 @@ class SimulatedAnnealing(object):
             return (last_best_result, last_cost)
 
     def reduce_temperature(self, T, t):
+        # Fazer com função euleriana
         return T - (t/100)
 
 
@@ -151,3 +152,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Fazer as respostas no readme
