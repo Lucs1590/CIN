@@ -100,13 +100,7 @@ class SimulatedAnnealing(object):
         current_best_result = self.gc.get_random_point(seed)
         last_best_result = current_best_result
 
-        (current_best_result, cost) = self.evaluate_point(
-            current_best_result, last_best_result)
-
-        self.cost_list.append(cost)
-        self.results_list.append(current_best_result)
-
-        while (self.it < max_it) or (temperature <= 0.1):
+        while self.it < max_it:
             self.it_repeat += 1 if current_best_result == last_best_result else 0
             if (self.it_repeat == round(max_it/3)):
                 print("(SA) Motivo de parada: Sem melhorias!")
@@ -114,22 +108,31 @@ class SimulatedAnnealing(object):
             last_best_result = current_best_result
             current_best_result = self.gc.disturb_point(current_best_result)
 
-            # a diferença do hill climb e do simulated estão exatamente aqui
             (current_best_result, cost) = self.evaluate_point(
-                current_best_result, last_best_result)
+                current_best_result, last_best_result, temperature)
 
             self.cost_list.append(cost)
             self.results_list.append(current_best_result)
 
+            temperature = self.reduce_temperature(temperature, self.it)
             self.it += 1
+
         print("(SA) Motivo de parada: Número máximo de interações atingido!") if max_it == self.it else ...
         self.gc.plot_poits(self.cost_list, self.results_list)
         return current_best_result, cost
 
-    def evaluate_point(self, best_result, last_best_result):
+    def evaluate_point(self, best_result, last_best_result, T):
         current_cost = self.gc.func_g_x(best_result)
         last_cost = self.gc.func_g_x(last_best_result)
-        return (best_result, current_cost) if last_cost < current_cost else (last_best_result, last_cost)
+        if last_cost < current_cost:
+            return (best_result, current_cost)
+        elif random.random() < math.exp(last_cost - current_cost / T):
+            return (best_result, current_cost)
+        else:
+            return (last_best_result, last_cost)
+
+    def reduce_temperature(self, T, t):
+        return T - (t/100)
 
 
 def main():
