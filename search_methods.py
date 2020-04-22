@@ -101,6 +101,7 @@ class SimulatedAnnealing(object):
         last_best_result = current_best_result
 
         while self.it < max_it:
+            # Fazer condição de parada com a temperatura minima tbm
             self.it_repeat += 1 if current_best_result == last_best_result else 0
             if (self.it_repeat == round(max_it/3)):
                 print("(SA) Motivo de parada: Sem melhorias!")
