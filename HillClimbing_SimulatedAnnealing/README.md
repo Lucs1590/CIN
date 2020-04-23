@@ -37,10 +37,13 @@ Por fim, embora em meus testes foi observado uma diferenção não muito signiti
 
 ### Exemplo 1
 Hill Climbing
+
 ![hc1](https://i.imgur.com/bVqmuNd.png)
 
 Simulated Annealing
+
 ![sm1](https://i.imgur.com/NM2xoC3.png)
+
 | Método              | Resultado x        | Custo              |
 |---------------------|--------------------|--------------------|
 | Hill Climbing       | 0.13               | 0.4995930048308231 |
@@ -50,9 +53,11 @@ Simulated Annealing
 
 ### Exemplo 2
 Hill Climbing
+
 ![hc2](https://i.imgur.com/T2EjpSG.png)
 
 Simulated Annealing
+
 ![sm2](https://i.imgur.com/7VZ5hsv.png)
 
 | Método              | Resultado x         | Custo              |
@@ -64,9 +69,11 @@ Simulated Annealing
 
 ### Exemplo 3
 Hill Climbing
+
 ![hc3](https://i.imgur.com/jY8AWYu.png)
 
 Simulated Annealing
+
 ![sm3](https://i.imgur.com/itEgtSC.png)
 
 | Método              | Resultado x         | Custo              |
