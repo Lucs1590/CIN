@@ -1,7 +1,6 @@
 import random
 from time import time
-# 1587603556.2999938 para <
-# 1587503056.092915 para >
+# 1587607351.1839364
 import matplotlib.pyplot as plt
 import math
 import numpy as np
