@@ -25,7 +25,9 @@ Além da semente randomica, podemos alterar a quantidade de inteções, todavida
 
 ![hc_esquema](https://static.javatpoint.com/tutorial/ai/images/hill-climbing-algorithm-in-ai.png)
 
-3. 
+3. Quanto a sensibilidade dos algoritimos, vale dizer que o ponto inicial tem extrema importancia, depois os ajustes que são feitos nessa algoritmo proporcionam um bom desempenho. Por exemplo, a função que avaliará o custo dos pontos. Digo que o coração do algoritmo se encontra ali, pois a partir dela que julgaremos o caminho que o algoritmo irá tomar, se será para maximizar ou minimizar e afins.
+Outro ponto de extrema importancia é a perturbação que será feita nos pontos. Como dito em aula, uma perturbação em demasia, poderia perder um otimo global, porém provocações pequenas necessitam de uma quantidade maior de interações para que seja possivel achar um ótimo melhor. O importante é saber que ambas situações devem ser consideradas.
+Por fim, embora em meus testes foi observado uma diferenção não muito signitificativa é visivel que com o **simulated annealing** foi possível encontrar menos interações e um resultado bem alto, visto que o mesmo possui uma probabilidade maior de coletar valores maiores com a utilização da probabilidade euleriana.
 
 ---
 
