@@ -90,6 +90,7 @@ class SimulatedAnnealing(object):
          self.results_list) = self.gc.set_default_values()
 
     def run_simulated_annealing(self, temperature, seed):
+        penalty = it = 100 / (temperature * 1.10)
         current_best_result = self.gc.get_random_point(seed)
         last_best_result = current_best_result
 
@@ -98,31 +99,33 @@ class SimulatedAnnealing(object):
             current_best_result = self.gc.disturb_point(current_best_result)
 
             (current_best_result, cost) = self.evaluate_point(
-                current_best_result, last_best_result, temperature)
+                current_best_result, last_best_result, temperature, penalty)
 
             self.cost_list.append(cost)
             self.results_list.append(current_best_result)
 
-            temperature = self.reduce_temperature(temperature, self.it)
+            temperature = self.reduce_temperature(temperature)
             self.it += 1
 
         print("(SA) Motivo de parada: Temperatura foi zerada!")
         self.gc.plot_poits(self.cost_list, self.results_list)
         return self.results_list[self.cost_list.index(max(self.cost_list))], max(self.cost_list)
 
-    def evaluate_point(self, best_result, last_best_result, T):
+    def evaluate_point(self, best_result, last_best_result, T, penalty):
         current_cost = self.gc.func_g_x(best_result)
         last_cost = self.gc.func_g_x(last_best_result)
+        probability = math.e**(last_cost - current_cost / T) - penalty
+        
         if last_cost < current_cost:
             return (best_result, current_cost)
-        elif random.random() <= math.e**(last_cost - current_cost / T):
+        elif random.random() <= probability:
             return (best_result, current_cost)
         else:
             return (last_best_result, last_cost)
 
-    def reduce_temperature(self, T, t):
+    def reduce_temperature(self, T):
         # Fazer com função euleriana
-        return T - (t/100)
+        return T - (T/70)
 
 
 def main():
