@@ -115,7 +115,7 @@ class SimulatedAnnealing(object):
         current_cost = self.gc.func_g_x(best_result)
         last_cost = self.gc.func_g_x(last_best_result)
         probability = math.e**(last_cost - current_cost / T) - penalty
-        
+
         if last_cost < current_cost:
             return (best_result, current_cost)
         elif random.random() <= probability:
@@ -129,7 +129,7 @@ class SimulatedAnnealing(object):
 
 
 def main():
-    seed = time()
+    seed = 1588449669.2848306
 
     max_it = 500
     T = 500
