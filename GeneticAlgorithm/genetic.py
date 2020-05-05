@@ -29,8 +29,11 @@ class GeneticAlgorithm(object):
     def evaluate(self, parameter_list):
         pass
 
-    def run_genetic_algorithm(self, parameter_list):
-        pass
+    def run_genetic_algorithm(self, goal):
+        population = self.generate_population(8)
+        print("Population: ", population)
+        hamming_distance = self.gc.calculate_hamming(population, goal)
+        print("Hamming Distance: ", hamming_distance)
 
 
 class GenericClass(object):
@@ -50,12 +53,18 @@ class GenericClass(object):
         index = index + (max_length - min_length)
         return index
 
+    def calculate_hamming(self, population, goal):
+        hamming_distance = []
+        for individual in population:
+            hamming_distance.append(self.hamming(goal, individual))
+        return hamming_distance
+
 
 def main():
     genetic = GeneticAlgorithm()
     gc = GenericClass()
 
-    genetic.run_genetic_algorithm()
+    genetic.run_genetic_algorithm('0b111101101111')
     # genetic.run_genetic_algorithm()
 
 
