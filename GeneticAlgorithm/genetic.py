@@ -34,6 +34,8 @@ class GeneticAlgorithm(object):
         print("Population: ", population)
         hamming_distance = self.gc.calculate_hamming(population, goal)
         print("Hamming Distance: ", hamming_distance)
+        aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
+        print("Aptitude: ", aptitude)
 
 
 class GenericClass(object):
@@ -58,6 +60,14 @@ class GenericClass(object):
                 index = index + 1
         index = index + (max_length - min_length)
         return index
+
+    def calculate_aptitude(self, hamming_distance, indiv_length):
+        # removing two because binary, in pyhton, start with 0b
+        indiv_length = indiv_length - 2
+        points = []
+        for point in hamming_distance:
+            points.append(indiv_length - point)
+        return points
 
 
 def main():
