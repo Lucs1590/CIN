@@ -43,6 +43,12 @@ class GenericClass(object):
     def to_number(self, bin_number):
         return int(bin_number, 2)
 
+    def calculate_hamming(self, population, goal):
+        hamming_distance = []
+        for individual in population:
+            hamming_distance.append(self.hamming(goal, individual))
+        return hamming_distance
+
     def hamming(self, seq_1, seq_2):
         index = 0
         min_length = min(len(seq_1), len(seq_2))
@@ -52,12 +58,6 @@ class GenericClass(object):
                 index = index + 1
         index = index + (max_length - min_length)
         return index
-
-    def calculate_hamming(self, population, goal):
-        hamming_distance = []
-        for individual in population:
-            hamming_distance.append(self.hamming(goal, individual))
-        return hamming_distance
 
 
 def main():
