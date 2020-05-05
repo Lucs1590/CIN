@@ -3,6 +3,20 @@ from time import time
 
 
 class GeneticAlgorithm(object):
+
+    def __init__(self):
+        self.gc = GenericClass()
+
+    def generate_population(self, indiv_number, _seed=time()):
+        print("Seed: ", _seed)
+        seed(_seed)
+        population = []
+
+        for individual in range(indiv_number):
+            population.append(self.gc.to_bin(randint(0, 3951)))
+
+        return population
+
     def select(self, parameter_list):
         pass
 
@@ -26,22 +40,22 @@ class GenericClass(object):
     def to_number(self, bin_number):
         return int(bin_number, 2)
 
-    def generate_population(self, indiv_number, _seed=time()):
-        print(_seed)
-        seed(_seed)
-        population = []
-
-        for individual in range(indiv_number):
-            population.append(self.to_bin(randint(0, 3951)))
-
-        return population
+    def hamming(self, seq_1, seq_2):
+        index = 0
+        min_length = min(len(seq_1), len(seq_2))
+        max_length = max(len(seq_1), len(seq_2))
+        for i in range(min_length):
+            if seq_1[i] != seq_2[i]:
+                index = index + 1
+        index = index + (max_length - min_length)
+        return index
 
 
 def main():
     genetic = GeneticAlgorithm()
     gc = GenericClass()
 
-    print(*gc.generate_population(8), sep='\n')
+    genetic.run_genetic_algorithm()
     # genetic.run_genetic_algorithm()
 
 
