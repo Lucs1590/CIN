@@ -1,5 +1,7 @@
 from random import randint, seed
 from time import time
+import operator
+from functools import reduce
 
 
 class GeneticAlgorithm(object):
@@ -18,8 +20,11 @@ class GeneticAlgorithm(object):
         return population
 
     def select(self, aptitude, population, needle_points):
+        population_numb = []
         roulette_needles = self.gc.define_needle_points(needle_points)
-        print("Agulhas: ", roulette_needles)
+        # print("Needles Points: ", roulette_needles)
+        individuals_point = self.gc.define_individuals_points(aptitude)
+        print("Individuals Point: ", individuals_point)
 
     def reproduce(self, parameter_list):
         pass
@@ -37,7 +42,7 @@ class GeneticAlgorithm(object):
         print("Hamming Distance: ", hamming_distance)
         aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
         print("Aptitude: ", aptitude)
-        stallions = self.select(aptitude, population, 3)
+        stallions = self.select(aptitude, population, 4)
 
 
 class GenericClass(object):
@@ -80,6 +85,13 @@ class GenericClass(object):
             needle = space
             space += space
         return needles
+
+    def define_individuals_points(self, population):
+        elements_value = []
+        elements_sum = reduce(operator.add, population)
+        for individual in population:
+            elements_value.append(round(individual/elements_sum, 3))
+        return elements_value
 
 
 def main():
