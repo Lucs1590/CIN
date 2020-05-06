@@ -17,8 +17,9 @@ class GeneticAlgorithm(object):
 
         return population
 
-    def select(self, parameter_list):
-        pass
+    def select(self, aptitude, population, needle_points):
+        roulette_needles = self.gc.define_needle_points(needle_points)
+        print("Agulhas: ", roulette_needles)
 
     def reproduce(self, parameter_list):
         pass
@@ -36,6 +37,7 @@ class GeneticAlgorithm(object):
         print("Hamming Distance: ", hamming_distance)
         aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
         print("Aptitude: ", aptitude)
+        stallions = self.select(aptitude, population, 3)
 
 
 class GenericClass(object):
@@ -68,6 +70,16 @@ class GenericClass(object):
         for point in hamming_distance:
             points.append(indiv_length - point)
         return points
+
+    def define_needle_points(self, needle_points):
+        needles = []
+        space = 1 / needle_points
+        needle = 0
+        while needle <= 1:
+            needles.append(round(needle, 2))
+            needle = space
+            space += space
+        return needles
 
 
 def main():
