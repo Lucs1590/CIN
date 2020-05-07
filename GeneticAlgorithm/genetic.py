@@ -1,4 +1,4 @@
-from random import randint, seed
+from random import randint, seed, random
 from time import time
 import operator
 from functools import reduce
@@ -29,6 +29,7 @@ class GeneticAlgorithm(object):
         # e depois colocar no mesmo vetor qual é aquele individuo. vai ficar assim: [[53,'0b110110101101'],[12,'0b10101010101001'],...]
         rolette = self.gc.define_rolette_positions_values(
             individuals_point, population)
+        print("Rolette: ", rolette)
 
     def reproduce(self, parameter_list):
         pass
@@ -82,20 +83,35 @@ class GenericClass(object):
 
     def define_needle_points(self, needle_points):
         needles = []
+        random_needles = []
         space = 1 / needle_points
         needle = 0
+        random_number = random()
         while needle <= 1:
             needles.append(round(needle, 2))
             needle = space
             space += space
-        return needles
+        for needle in needles:
+            random_needles.append(needle*random_number*360)
+        return random_needles
 
     def define_individuals_points(self, population):
         elements_value = []
         elements_sum = reduce(operator.add, population)
         for individual in population:
-            elements_value.append(round(individual/elements_sum, 3))
+            elements_value.append(individual/elements_sum)
         return elements_value
+
+    def define_rolette_positions_values(self, points, population):
+        i = 0
+        prev_value = 0
+        rolette = []
+        while i < len(population):
+            degrees = prev_value + (points[i] * 360)
+            rolette.append([degrees, population[i]])
+            prev_value = float(rolette[-1][0])
+            i += 1
+        return rolette
 
 
 def main():
