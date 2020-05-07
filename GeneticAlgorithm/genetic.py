@@ -108,8 +108,8 @@ class GenericClass(object):
         rolette = []
         while i < len(population):
             degrees = prev_value + (points[i] * 360)
-            rolette.append([degrees, population[i]])
-            prev_value = float(rolette[-1][0])
+            rolette.append([prev_value, degrees, population[i]])
+            prev_value = float(rolette[-1][1])
             i += 1
         return rolette
 
