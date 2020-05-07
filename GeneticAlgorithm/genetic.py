@@ -1,4 +1,4 @@
-from random import randint, seed, random
+from random import randint, seed, random, sample
 from time import time
 import operator
 from functools import reduce
@@ -20,16 +20,12 @@ class GeneticAlgorithm(object):
         return population
 
     def select(self, aptitude, population, needle_points):
-        population_numb = []
-        roulette_needles = self.gc.define_needle_points(needle_points)
-        # print("Needles Points: ", roulette_needles)
-        individuals_point = self.gc.define_individuals_points(aptitude)
-        # print("Individuals Points: ", individuals_point)
-        roulette = self.gc.define_roulette_positions_values(
-            individuals_point, population)
-       #  print("roulette: ", roulette)
+        individuals_score = self.gc.define_individuals_score(aptitude)
+        population_scores = self.gc.group_sort_population_score(
+            population, individuals_score)
+        roulette = self.gc.define_roulette_positions_values(population_scores)
         selected_individuals = self.gc.select_individuals(
-            roulette, roulette_needles)
+            roulette, needle_points)
         print("Selected Individuals: ", selected_individuals)
         return selected_individuals
 
@@ -49,7 +45,8 @@ class GeneticAlgorithm(object):
         print("Hamming Distance: ", hamming_distance)
         aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
         print("Aptitude: ", aptitude)
-        stallions = self.select(aptitude, population, 8)
+        roulette_needles = self.gc.define_needle_points(8)
+        stallions = self.select(aptitude, population, roulette_needles)
 
 
 class GenericClass(object):
@@ -97,20 +94,28 @@ class GenericClass(object):
             random_needles.append(needle*360)
         return random_needles
 
-    def define_individuals_points(self, population):
+    def define_individuals_score(self, population):
         elements_value = []
         elements_sum = reduce(operator.add, population)
         for individual in population:
             elements_value.append(individual/elements_sum)
         return elements_value
 
-    def define_roulette_positions_values(self, points, population):
+    def group_sort_population_score(self, scores, population):
+        population_score = []
+        i = 0
+        while i < len(population):
+            population_score.append([population[i], scores[i]])
+            i += 1
+        return sample(population_score, len(population_score))
+
+    def define_roulette_positions_values(self, population_score):
         i = 0
         prev_value = 0
         roulette = []
-        while i < len(population):
-            degrees = prev_value + (points[i] * 360)
-            roulette.append([prev_value, degrees, population[i]])
+        while i < len(population_score):
+            degrees = prev_value + (population_score[i][0] * 360)
+            roulette.append([prev_value, degrees, population_score[i][1]])
             prev_value = float(roulette[-1][1])
             i += 1
         return roulette
@@ -119,7 +124,7 @@ class GenericClass(object):
         selecteds = []
         for needles in roulette_needles:
             for individual in roulette:
-                if needles <= individual[1] and needles > individual[0]:
+                if needles < individual[1] and needles >= individual[0]:
                     selecteds.append(individual[2])
         return selecteds
 
