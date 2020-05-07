@@ -86,12 +86,13 @@ class GenericClass(object):
         needles = []
         random_needles = []
         space = 1 / needle_points
+        space_it = space
         needle = 0
         random_number = random()
         while needle <= 1:
             needles.append(round(needle, 2))
-            needle = space
-            space += space
+            needle = space_it
+            space_it += space
         for needle in needles:
             random_needles.append(needle*random_number*360)
         return random_needles
@@ -114,9 +115,13 @@ class GenericClass(object):
             i += 1
         return roulette
 
-    def select_individuals(roulette, roulette_needles):
-        pass
-
+    def select_individuals(self, roulette, roulette_needles):
+        selecteds = []
+        for roulette_needles in roulette_needles:
+            for individual in roulette:
+                if roulette_needles < individual[1] and roulette_needles > individual[0]:
+                    selecteds.append(individual[2])
+        return selecteds
 
 def main():
     genetic = GeneticAlgorithm()
