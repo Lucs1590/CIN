@@ -25,8 +25,6 @@ class GeneticAlgorithm(object):
         # print("Needles Points: ", roulette_needles)
         individuals_point = self.gc.define_individuals_points(aptitude)
         print("Individuals Points: ", individuals_point)
-        # Fazer uma matriz com quanto da roleta vai representar(multiplica os valores de individuals_points por 360)
-        # e depois colocar no mesmo vetor qual é aquele individuo. vai ficar assim: [[53,'0b110110101101'],[12,'0b10101010101001'],...]
         rolette = self.gc.define_rolette_positions_values(
             individuals_point, population)
         print("Rolette: ", rolette)
