@@ -24,13 +24,14 @@ class GeneticAlgorithm(object):
         roulette_needles = self.gc.define_needle_points(needle_points)
         # print("Needles Points: ", roulette_needles)
         individuals_point = self.gc.define_individuals_points(aptitude)
-        print("Individuals Points: ", individuals_point)
+        # print("Individuals Points: ", individuals_point)
         roulette = self.gc.define_roulette_positions_values(
             individuals_point, population)
-        print("roulette: ", roulette)
+       #  print("roulette: ", roulette)
         selected_individuals = self.gc.select_individuals(
             roulette, roulette_needles)
         print("Selected Individuals: ", selected_individuals)
+        return selected_individuals
 
     def reproduce(self, parameter_list):
         pass
@@ -88,13 +89,12 @@ class GenericClass(object):
         space = 1 / needle_points
         space_it = space
         needle = 0
-        random_number = random()
         while needle <= 1:
             needles.append(round(needle, 2))
             needle = space_it
             space_it += space
         for needle in needles:
-            random_needles.append(needle*random_number*360)
+            random_needles.append(needle*360)
         return random_needles
 
     def define_individuals_points(self, population):
@@ -117,11 +117,12 @@ class GenericClass(object):
 
     def select_individuals(self, roulette, roulette_needles):
         selecteds = []
-        for roulette_needles in roulette_needles:
+        for needles in roulette_needles:
             for individual in roulette:
-                if roulette_needles < individual[1] and roulette_needles > individual[0]:
+                if needles <= individual[1] and needles > individual[0]:
                     selecteds.append(individual[2])
         return selecteds
+
 
 def main():
     genetic = GeneticAlgorithm()
