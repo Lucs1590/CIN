@@ -25,9 +25,12 @@ class GeneticAlgorithm(object):
         # print("Needles Points: ", roulette_needles)
         individuals_point = self.gc.define_individuals_points(aptitude)
         print("Individuals Points: ", individuals_point)
-        rolette = self.gc.define_rolette_positions_values(
+        roulette = self.gc.define_roulette_positions_values(
             individuals_point, population)
-        print("Rolette: ", rolette)
+        print("roulette: ", roulette)
+        selected_individuals = self.gc.select_individuals(
+            roulette, roulette_needles)
+        print("Selected Individuals: ", selected_individuals)
 
     def reproduce(self, parameter_list):
         pass
@@ -45,7 +48,7 @@ class GeneticAlgorithm(object):
         print("Hamming Distance: ", hamming_distance)
         aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
         print("Aptitude: ", aptitude)
-        stallions = self.select(aptitude, population, 4)
+        stallions = self.select(aptitude, population, 8)
 
 
 class GenericClass(object):
@@ -100,16 +103,19 @@ class GenericClass(object):
             elements_value.append(individual/elements_sum)
         return elements_value
 
-    def define_rolette_positions_values(self, points, population):
+    def define_roulette_positions_values(self, points, population):
         i = 0
         prev_value = 0
-        rolette = []
+        roulette = []
         while i < len(population):
             degrees = prev_value + (points[i] * 360)
-            rolette.append([prev_value, degrees, population[i]])
-            prev_value = float(rolette[-1][1])
+            roulette.append([prev_value, degrees, population[i]])
+            prev_value = float(roulette[-1][1])
             i += 1
-        return rolette
+        return roulette
+
+    def select_individuals(roulette, roulette_needles):
+        pass
 
 
 def main():
