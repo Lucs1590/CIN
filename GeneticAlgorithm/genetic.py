@@ -8,6 +8,7 @@ class GeneticAlgorithm(object):
 
     def __init__(self):
         self.gc = GenericClass()
+        self.new_generation = []
 
     def generate_population(self, indiv_number, _seed=time()):
         print("Seed: ", _seed)
@@ -31,7 +32,34 @@ class GeneticAlgorithm(object):
 
     def reproduce(self, stallions):
         population_pair = self.gc.pair_stallions(stallions)
-        cross_chance = self.gc.generate_random_chance(population_pair)
+        cross_chances = self.gc.generate_random_chance(population_pair)
+        self.cross_over(population_pair, cross_chances,
+                        randint(3, (len(population_pair[0][0])-1)))
+
+    def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
+        self.new_generation = []
+        i = 0
+        while i < len(cross_chances):
+            if cross_chances[i] <= Pc:
+                individuals_pair = self.make_cross_over(
+                    population_pair[i], crop)
+                self.make_new_generation(individuals_pair)
+            else:
+                self.make_new_generation(population_pair[i])
+            i += 1
+        return self.new_generation
+
+    def make_cross_over(self, population_pair, crop):
+        cropped_start = []
+        cropped_end = []
+        for individual in population_pair:
+            cropped_start.append(individual[2:crop])
+            cropped_end.append(individual[crop:])
+        return ["0b" + cropped_start[0] + cropped_end[1], "0b" + cropped_start[1] + cropped_end[0]]
+
+    def make_new_generation(self, population_pair):
+        for individual in population_pair:
+            self.new_generation.append(individual)
 
     def vary(self, parameter_list):
         pass
@@ -126,15 +154,15 @@ class GenericClass(object):
         selecteds = []
         for needles in roulette_needles:
             for individual in roulette:
-                if needles < individual[1] and needles >= individual[0]:
+                if needles > individual[0] and needles <= individual[1]:
                     selecteds.append(individual[2])
         return selecteds
 
     def pair_stallions(self, population):
         population_pair = []
         i = 2
-        while i < len(population):
-            population_pair.append(population[i-2:i])
+        while i <= len(population):
+            population_pair.append(population[(i-2):i])
             i += 2
         return population_pair
 
