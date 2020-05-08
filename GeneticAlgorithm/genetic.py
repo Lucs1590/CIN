@@ -29,8 +29,9 @@ class GeneticAlgorithm(object):
         print("Selected Individuals: ", selected_individuals)
         return selected_individuals
 
-    def reproduce(self, parameter_list):
-        pass
+    def reproduce(self, stallions):
+        population_pair = self.gc.pair_stallions(stallions)
+        cross_chance = self.gc.generate_random_chance(population_pair)
 
     def vary(self, parameter_list):
         pass
@@ -42,11 +43,12 @@ class GeneticAlgorithm(object):
         population = self.generate_population(8)
         print("Population: ", population)
         hamming_distance = self.gc.calculate_hamming(population, goal)
-        print("Hamming Distance: ", hamming_distance)
+        # print("Hamming Distance: ", hamming_distance)
         aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
-        print("Aptitude: ", aptitude)
+        # print("Aptitude: ", aptitude)
         roulette_needles = self.gc.define_needle_points(8)
         stallions = self.select(aptitude, population, roulette_needles)
+        new_population = self.reproduce(stallions)
 
 
 class GenericClass(object):
@@ -128,13 +130,26 @@ class GenericClass(object):
                     selecteds.append(individual[2])
         return selecteds
 
+    def pair_stallions(self, population):
+        population_pair = []
+        i = 2
+        while i < len(population):
+            population_pair.append(population[i-2:i])
+            i += 2
+        return population_pair
+
+    def generate_random_chance(self, population_pair):
+        chances = []
+        for chance in population_pair:
+            chances.append(random())
+        return chances
+
 
 def main():
     genetic = GeneticAlgorithm()
     gc = GenericClass()
 
     genetic.run_genetic_algorithm('0b111101101111')
-    # genetic.run_genetic_algorithm()
 
 
 if __name__ == "__main__":
