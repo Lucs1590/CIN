@@ -27,14 +27,14 @@ class GeneticAlgorithm(object):
         roulette = self.gc.define_roulette_positions_values(population_scores)
         selected_individuals = self.gc.select_individuals(
             roulette, needle_points)
-        print("Selected Individuals: ", selected_individuals)
         return selected_individuals
 
     def reproduce(self, stallions):
         population_pair = self.gc.pair_stallions(stallions)
         cross_chances = self.gc.generate_random_chance(population_pair)
-        self.cross_over(population_pair, cross_chances,
-                        randint(3, (len(population_pair[0][0])-1)))
+        new_generation = self.cross_over(
+            population_pair, cross_chances, randint(3, (len(population_pair[0][0])-1)))
+        return new_generation
 
     def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
         self.new_generation = []
@@ -76,7 +76,9 @@ class GeneticAlgorithm(object):
         # print("Aptitude: ", aptitude)
         roulette_needles = self.gc.define_needle_points(8)
         stallions = self.select(aptitude, population, roulette_needles)
-        new_population = self.reproduce(stallions)
+        print("Selected Individuals: ", stallions)
+        new_generation = self.reproduce(stallions)
+        print("New Generetion: ", new_generation)
 
 
 class GenericClass(object):
