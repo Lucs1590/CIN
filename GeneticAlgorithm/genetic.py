@@ -210,7 +210,7 @@ class GenericClass(object):
         plt.subplot(211)
         plt.plot("aptitude", data=df, color="red")
         plt.title("Aptitude e Aptitude AVG")
-        plt.ylabel("Aptitude AVG")
+        plt.ylabel("Aptitude")
 
         plt.subplot(212)
         plt.plot("aptitude_AVG", data=df, color="green")
