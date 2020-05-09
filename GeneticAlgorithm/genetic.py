@@ -2,6 +2,8 @@ from random import randint, seed, random, sample
 from time import time
 import operator
 from functools import reduce
+import matplotlib.pyplot as plt
+import pandas as pd
 
 
 class GeneticAlgorithm(object):
@@ -82,6 +84,8 @@ class GeneticAlgorithm(object):
 
     def run_genetic_algorithm(self, goal):
         i = 1
+        aptitudes = []
+        aptitudes_avg = []
         population = self.generate_population(8)
         print("Population: ", population)
 
@@ -91,6 +95,9 @@ class GeneticAlgorithm(object):
             hamming_distance = self.gc.calculate_hamming(population, goal)
             # print("Hamming Distance: ", hamming_distance)
             aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
+            aptitudes_avg.append(
+                (reduce(operator.add, aptitude)/len(aptitude)))
+            aptitudes.append(reduce(operator.add, aptitude))
             # print("Aptitude: ", aptitude)
             roulette_needles = self.gc.define_needle_points(8)
             stallions = self.select(aptitude, population, roulette_needles)
@@ -102,7 +109,7 @@ class GeneticAlgorithm(object):
             i += 1
             population = mutated_new_generation
 
-        return [population, i]
+        return [population, i, aptitudes, aptitudes_avg]
 
 
 class GenericClass(object):
@@ -198,12 +205,28 @@ class GenericClass(object):
             chances.append(random())
         return chances
 
+    def plot_poits(self, aptitude, aptitude_avg):
+        df = pd.DataFrame({"aptitude": aptitude, "aptitude_AVG": aptitude_avg})
+        plt.subplot(211)
+        plt.plot("aptitude", data=df, color="red")
+        plt.title("Aptitude e Aptitude AVG")
+        plt.ylabel("Aptitude AVG")
+
+        plt.subplot(212)
+        plt.plot("aptitude_AVG", data=df, color="green")
+        plt.xlabel("Interações")
+        plt.ylabel("Aptitude AVG")
+        plt.show()
+
 
 def main():
     genetic = GeneticAlgorithm()
     gc = GenericClass()
 
-    genetic.run_genetic_algorithm('0b111101101111')
+    results = genetic.run_genetic_algorithm('0b111101101111')
+    print("Final Generation: ", results[0])
+    print("Interações: ", results[1])
+    gc.plot_poits(results[2], results[3])
 
 
 if __name__ == "__main__":
