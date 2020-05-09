@@ -61,24 +61,48 @@ class GeneticAlgorithm(object):
         for individual in population_pair:
             self.new_generation.append(individual)
 
-    def vary(self, parameter_list):
-        pass
+    def mutate(self, population):
+        mutated_list = []
+        for individual in population:
+            mutated_individual = ['0', 'b']
+            i = 2
+            while i < len(individual):
+                bit = self.transform_bit(individual[i])
+                mutated_individual.append(bit)
+                i += 1
 
-    def evaluate(self, parameter_list):
-        pass
+            mutated_list.append(''.join(mutated_individual))
+        return mutated_list
+
+    def transform_bit(self, bit):
+        random_chance = random()
+        if random_chance <= 0.02:
+            bit = '0' if bit == '1' else '1'
+        return bit
 
     def run_genetic_algorithm(self, goal):
+        i = 1
         population = self.generate_population(8)
         print("Population: ", population)
-        hamming_distance = self.gc.calculate_hamming(population, goal)
-        # print("Hamming Distance: ", hamming_distance)
-        aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
-        # print("Aptitude: ", aptitude)
-        roulette_needles = self.gc.define_needle_points(8)
-        stallions = self.select(aptitude, population, roulette_needles)
-        print("Selected Individuals: ", stallions)
-        new_generation = self.reproduce(stallions)
-        print("New Generetion: ", new_generation)
+
+        while True:
+            if goal in population:
+                break
+            hamming_distance = self.gc.calculate_hamming(population, goal)
+            # print("Hamming Distance: ", hamming_distance)
+            aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
+            # print("Aptitude: ", aptitude)
+            roulette_needles = self.gc.define_needle_points(8)
+            stallions = self.select(aptitude, population, roulette_needles)
+            # print("Selected Individuals: ", stallions)
+            new_generation = self.reproduce(stallions)
+            # print("New Generetion: ", new_generation)
+            mutated_new_generation = self.mutate(new_generation)
+
+            i += 1
+            population = mutated_new_generation
+
+        return [population, i]
 
 
 class GenericClass(object):
