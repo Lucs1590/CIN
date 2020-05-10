@@ -15,7 +15,7 @@ class GeneticAlgorithm(object):
 
     def run_genetic_algorithm(self, goal):
         i = 1
-        aptitudes = []
+        min_aptitudes = []
         aptitudes_avg = []
         population = self.generate_population(8)
         print("Population: ", population)
@@ -28,7 +28,7 @@ class GeneticAlgorithm(object):
             aptitude = self.aux.calculate_aptitude(hamming_distance, 14)
             aptitudes_avg.append(
                 (reduce(operator.add, aptitude)/len(aptitude)))
-            aptitudes.append(reduce(operator.add, aptitude))
+            min_aptitudes.append(min(aptitude))
             # print("Aptitude: ", aptitude)
             roulette_needles = self.aux.define_needle_points(8)
             stallions = self.select(aptitude, population, roulette_needles)
@@ -40,7 +40,7 @@ class GeneticAlgorithm(object):
             i += 1
             population = mutated_new_generation
 
-        return [population, i, aptitudes, aptitudes_avg]
+        return [population, i, min_aptitudes, aptitudes_avg]
 
     def generate_population(self, indiv_number, _seed=time()):
         print("Seed: ", _seed)
@@ -206,12 +206,13 @@ class AuxClass(object):
             chances.append(random())
         return chances
 
-    def plot_poits(self, aptitude, aptitude_avg):
-        df = pd.DataFrame({"aptitude": aptitude, "aptitude_AVG": aptitude_avg})
+    def plot_poits(self, min_aptitude, aptitude_avg):
+        df = pd.DataFrame(
+            {"aptitude": min_aptitude, "aptitude_AVG": aptitude_avg})
         plt.subplot(211)
         plt.plot("aptitude", data=df, color="red")
-        plt.title("Aptitude and Aptitude AVG")
-        plt.ylabel("Aptitude")
+        plt.title("Min. aptitude and aptitude AVG")
+        plt.ylabel("Min. aptitude")
 
         plt.subplot(212)
         plt.plot("aptitude_AVG", data=df, color="green")
@@ -224,9 +225,12 @@ def main():
     genetic = GeneticAlgorithm()
     aux = AuxClass()
 
+    start_time = time()
     results = genetic.run_genetic_algorithm('0b111101101111')
     print("Final Generation: ", results[0])
     print("Interações: ", results[1])
+    print("Time: ", time() - start_time)
+
     aux.plot_poits(results[2], results[3])
 
 
