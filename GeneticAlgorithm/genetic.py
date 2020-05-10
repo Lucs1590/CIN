@@ -1,5 +1,6 @@
 from random import randint, seed, random, sample
 from time import time
+# 1589148085.5775692
 import operator
 from functools import reduce
 import matplotlib.pyplot as plt
@@ -9,8 +10,37 @@ import pandas as pd
 class GeneticAlgorithm(object):
 
     def __init__(self):
-        self.gc = GenericClass()
+        self.aux = AuxClass()
         self.new_generation = []
+
+    def run_genetic_algorithm(self, goal):
+        i = 1
+        aptitudes = []
+        aptitudes_avg = []
+        population = self.generate_population(8)
+        print("Population: ", population)
+
+        while True:
+            if goal in population:
+                break
+            hamming_distance = self.aux.calculate_hamming(population, goal)
+            # print("Hamming Distance: ", hamming_distance)
+            aptitude = self.aux.calculate_aptitude(hamming_distance, 14)
+            aptitudes_avg.append(
+                (reduce(operator.add, aptitude)/len(aptitude)))
+            aptitudes.append(reduce(operator.add, aptitude))
+            # print("Aptitude: ", aptitude)
+            roulette_needles = self.aux.define_needle_points(8)
+            stallions = self.select(aptitude, population, roulette_needles)
+            # print("Selected Individuals: ", stallions)
+            new_generation = self.reproduce(stallions)
+            # print("New Generetion: ", new_generation)
+            mutated_new_generation = self.mutate(new_generation)
+
+            i += 1
+            population = mutated_new_generation
+
+        return [population, i, aptitudes, aptitudes_avg]
 
     def generate_population(self, indiv_number, _seed=time()):
         print("Seed: ", _seed)
@@ -18,22 +48,22 @@ class GeneticAlgorithm(object):
         population = []
 
         for individual in range(indiv_number):
-            population.append(self.gc.to_bin(randint(0, 3951)))
+            population.append(self.aux.to_bin(randint(0, 4095)))
 
         return population
 
     def select(self, aptitude, population, needle_points):
-        individuals_score = self.gc.define_individuals_score(aptitude)
-        population_scores = self.gc.group_sort_population_score(
+        individuals_score = self.aux.define_individuals_score(aptitude)
+        population_scores = self.aux.group_sort_population_score(
             population, individuals_score)
-        roulette = self.gc.define_roulette_positions_values(population_scores)
-        selected_individuals = self.gc.select_individuals(
+        roulette = self.aux.define_roulette_positions_values(population_scores)
+        selected_individuals = self.aux.select_individuals(
             roulette, needle_points)
         return selected_individuals
 
     def reproduce(self, stallions):
-        population_pair = self.gc.pair_stallions(stallions)
-        cross_chances = self.gc.generate_random_chance(population_pair)
+        population_pair = self.aux.pair_stallions(stallions)
+        cross_chances = self.aux.generate_random_chance(population_pair)
         new_generation = self.cross_over(
             population_pair, cross_chances, randint(3, (len(population_pair[0][0])-1)))
         return new_generation
@@ -82,37 +112,8 @@ class GeneticAlgorithm(object):
             bit = '0' if bit == '1' else '1'
         return bit
 
-    def run_genetic_algorithm(self, goal):
-        i = 1
-        aptitudes = []
-        aptitudes_avg = []
-        population = self.generate_population(8)
-        print("Population: ", population)
 
-        while True:
-            if goal in population:
-                break
-            hamming_distance = self.gc.calculate_hamming(population, goal)
-            # print("Hamming Distance: ", hamming_distance)
-            aptitude = self.gc.calculate_aptitude(hamming_distance, 14)
-            aptitudes_avg.append(
-                (reduce(operator.add, aptitude)/len(aptitude)))
-            aptitudes.append(reduce(operator.add, aptitude))
-            # print("Aptitude: ", aptitude)
-            roulette_needles = self.gc.define_needle_points(8)
-            stallions = self.select(aptitude, population, roulette_needles)
-            # print("Selected Individuals: ", stallions)
-            new_generation = self.reproduce(stallions)
-            # print("New Generetion: ", new_generation)
-            mutated_new_generation = self.mutate(new_generation)
-
-            i += 1
-            population = mutated_new_generation
-
-        return [population, i, aptitudes, aptitudes_avg]
-
-
-class GenericClass(object):
+class AuxClass(object):
     def to_bin(self, int_number):
         return format(int_number, '#014b')
 
@@ -209,24 +210,24 @@ class GenericClass(object):
         df = pd.DataFrame({"aptitude": aptitude, "aptitude_AVG": aptitude_avg})
         plt.subplot(211)
         plt.plot("aptitude", data=df, color="red")
-        plt.title("Aptitude e Aptitude AVG")
+        plt.title("Aptitude and Aptitude AVG")
         plt.ylabel("Aptitude")
 
         plt.subplot(212)
         plt.plot("aptitude_AVG", data=df, color="green")
-        plt.xlabel("Interações")
+        plt.xlabel("Interactions")
         plt.ylabel("Aptitude AVG")
         plt.show()
 
 
 def main():
     genetic = GeneticAlgorithm()
-    gc = GenericClass()
+    aux = AuxClass()
 
     results = genetic.run_genetic_algorithm('0b111101101111')
     print("Final Generation: ", results[0])
     print("Interações: ", results[1])
-    gc.plot_poits(results[2], results[3])
+    aux.plot_poits(results[2], results[3])
 
 
 if __name__ == "__main__":
