@@ -73,8 +73,9 @@ class HillClimbing(object):
             self.it += 1
         print(
             "(HC) Motivo de parada: Número máximo de interações atingido!") if max_it == self.it else ...
+        finished_time = time()
         self.gc.plot_poits(self.cost_list, self.results_list)
-        return current_best_result, cost
+        return current_best_result, cost, finished_time
 
     def evaluate_point(self, best_result, last_best_result):
         current_cost = self.gc.func_g_x(best_result)
@@ -108,8 +109,9 @@ class SimulatedAnnealing(object):
             self.it += 1
 
         print("(SA) Motivo de parada: Temperatura foi zerada!")
+        finished_time = time()
         self.gc.plot_poits(self.cost_list, self.results_list)
-        return self.results_list[self.cost_list.index(max(self.cost_list))], max(self.cost_list)
+        return self.results_list[self.cost_list.index(max(self.cost_list))], max(self.cost_list), finished_time
 
     def evaluate_point(self, best_result, last_best_result, T, penalty):
         current_cost = self.gc.func_g_x(best_result)
@@ -139,10 +141,19 @@ def main():
     sa = SimulatedAnnealing()
 
     print("Semente: ", seed)
-    (hc_best_result, hc_cost) = hc.run_hill_climbing(max_it, min_value, seed)
-    (sa_best_result, sa_cost) = sa.run_simulated_annealing(T, seed)
+    start_hc_time = time()
+    (hc_best_result, hc_cost, end_hc_time) = hc.run_hill_climbing(
+        max_it, min_value, seed)
+    hc_time = end_hc_time - start_hc_time
+
+    start_sa_time = time()
+    (sa_best_result, sa_cost, end_sa_time) = sa.run_simulated_annealing(T, seed)
+    sa_time = end_sa_time - start_sa_time
+
     GenericClass.format_table(
         GenericClass, hc_best_result, hc_cost, sa_best_result, sa_cost)
+    print("Tempo HC: ", hc_time)
+    print("Tempo SA: ", sa_time)
 
 
 if __name__ == "__main__":
