@@ -22,6 +22,11 @@ class GeneticAlgorithm(object):
 
         while True:
             if goal in population:
+                hamming_distance = self.aux.calculate_hamming(population, goal)
+                aptitude = self.aux.calculate_aptitude(hamming_distance, 14)
+                aptitudes_avg.append(
+                    (reduce(operator.add, aptitude)/len(aptitude)))
+                min_aptitudes.append(min(aptitude))
                 break
             hamming_distance = self.aux.calculate_hamming(population, goal)
             # print("Hamming Distance: ", hamming_distance)
@@ -228,7 +233,7 @@ def main():
     start_time = time()
     results = genetic.run_genetic_algorithm('0b111101101111')
     print("Final Generation: ", results[0])
-    print("Interações: ", results[1])
+    print("Interactions: ", results[1])
     print("Time: ", time() - start_time)
 
     aux.plot_poits(results[2], results[3])
