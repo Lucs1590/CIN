@@ -6,6 +6,7 @@ import math
 import numpy as np
 import pandas as pd
 from terminaltables import AsciiTable
+import GeneticAlgorithm
 
 
 class GenericClass(object):
@@ -91,7 +92,7 @@ class SimulatedAnnealing(object):
          self.results_list) = self.gc.set_default_values()
 
     def run_simulated_annealing(self, temperature, seed):
-        penalty = it = 100 / (temperature * 1.10)
+        penalty = 100 / (temperature * 1.10)
         current_best_result = self.gc.get_random_point(seed)
         last_best_result = current_best_result
 
@@ -139,6 +140,9 @@ def main():
 
     hc = HillClimbing()
     sa = SimulatedAnnealing()
+    genetic = genetic.GeneticAlgorithm()
+
+    print(genetic.generate_population(8))
 
     print("Semente: ", seed)
     start_hc_time = time()
