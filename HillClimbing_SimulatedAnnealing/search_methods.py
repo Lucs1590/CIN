@@ -131,12 +131,20 @@ class SimulatedAnnealing(object):
 
 
 class GeneticAlgorithm(object):
-    def run_genetic_algorithm(self, seed):
-        i = 1
+    def __init__(self):
+        self.gc = GenericClass()
+        self.new_generation = []
+
+    def run_genetic_algorithm(self, seed, it):
+        max_it = 1
         min_aptitudes = []
         aptitudes_avg = []
         population = self.generate_population(8, seed)
         print("Population: ", population)
+
+        while max_it <= it:
+            aptitudes = self.calculate_aptitudes(population)
+            
 
     def generate_population(self, indiv_number, _seed):
         print("Seed: ", _seed)
@@ -144,9 +152,17 @@ class GeneticAlgorithm(object):
         population = []
 
         for individual in range(indiv_number):
-            population.append(self.aux.to_bin(randint(0, 4095)))
+            population.append(self.gc.get_random_point(_seed))
 
         return population
+
+    def calculate_aptitudes(self, population):
+        aptitudes = []
+
+        for individual in population:
+            aptitudes.append(self.gc.func_g_x(individual))
+
+        return aptitudes
 
 
 def main():
