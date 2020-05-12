@@ -1,4 +1,3 @@
-import random
 from time import time
 # 1587607351.1839364
 import matplotlib.pyplot as plt
@@ -6,14 +5,14 @@ import math
 import numpy as np
 import pandas as pd
 from terminaltables import AsciiTable
-import GeneticAlgorithm
+from random import randint, random, seed, sample
 
 
 class GenericClass(object):
 
-    def get_random_point(self, seed):
-        random.seed(seed)
-        return round(random.random(), 2)
+    def get_random_point(self, _seed):
+        seed(_seed)
+        return round(random(), 2)
 
     def disturb_point(self, point):
         return float(point + np.random.normal(0, 0.001, 1))
@@ -121,7 +120,7 @@ class SimulatedAnnealing(object):
 
         if last_cost < current_cost:
             return (best_result, current_cost)
-        elif random.random() <= probability:
+        elif random() <= probability:
             return (best_result, current_cost)
         else:
             return (last_best_result, last_cost)
@@ -129,6 +128,25 @@ class SimulatedAnnealing(object):
     def reduce_temperature(self, T):
         # Fazer com função euleriana
         return T - (T/70)
+
+
+class GeneticAlgorithm(object):
+    def run_genetic_algorithm(self, seed):
+        i = 1
+        min_aptitudes = []
+        aptitudes_avg = []
+        population = self.generate_population(8, seed)
+        print("Population: ", population)
+
+    def generate_population(self, indiv_number, _seed):
+        print("Seed: ", _seed)
+        seed(_seed)
+        population = []
+
+        for individual in range(indiv_number):
+            population.append(self.aux.to_bin(randint(0, 4095)))
+
+        return population
 
 
 def main():
@@ -140,11 +158,10 @@ def main():
 
     hc = HillClimbing()
     sa = SimulatedAnnealing()
-    genetic = genetic.GeneticAlgorithm()
-
-    print(genetic.generate_population(8))
+    genetic = GeneticAlgorithm()
 
     print("Semente: ", seed)
+
     start_hc_time = time()
     (hc_best_result, hc_cost, end_hc_time) = hc.run_hill_climbing(
         max_it, min_value, seed)
