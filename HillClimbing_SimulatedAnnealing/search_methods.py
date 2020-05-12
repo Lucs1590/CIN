@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 from terminaltables import AsciiTable
 from random import randint, random, seed, sample
+import operator
+from functools import reduce
 
 
 class GenericClass(object):
@@ -44,6 +46,54 @@ class GenericClass(object):
 
     def set_default_values(self):
         return (0, 0, 0, [], [])
+
+    def define_needle_points(self, needle_points):
+        needles = []
+        random_needles = []
+        space = 1 / needle_points
+        space_it = space
+        needle = 0
+        while needle <= 1:
+            needles.append(round(needle, 2))
+            needle = space_it
+            space_it += space
+        for needle in needles:
+            random_needles.append(needle*360)
+        return random_needles
+
+    def define_individuals_score(self, aptitudes):
+        scores_value = []
+        elements_sum = reduce(operator.add, aptitudes)
+        for score in aptitudes:
+            scores_value.append(score/elements_sum)
+        return scores_value
+
+    def group_sort_population_score(self, scores, population):
+        population_score = []
+        i = 0
+        while i < len(population):
+            population_score.append([population[i], scores[i]])
+            i += 1
+        return sample(population_score, len(population_score))
+
+    def define_roulette_positions_values(self, population_score):
+        i = 0
+        prev_value = 0
+        roulette = []
+        while i < len(population_score):
+            degrees = prev_value + (population_score[i][0] * 360)
+            roulette.append([prev_value, degrees, population_score[i][1]])
+            prev_value = float(roulette[-1][1])
+            i += 1
+        return roulette
+
+    def select_individuals(self, roulette, roulette_needles):
+        selecteds = []
+        for needles in roulette_needles:
+            for individual in roulette:
+                if needles > individual[0] and needles <= individual[1]:
+                    selecteds.append(individual[2])
+        return selecteds
 
 
 class HillClimbing(object):
@@ -135,34 +185,39 @@ class GeneticAlgorithm(object):
         self.gc = GenericClass()
         self.new_generation = []
 
-    def run_genetic_algorithm(self, seed, it):
+    def run_genetic_algorithm(self, seed, indiv_number, it):
         max_it = 1
         min_aptitudes = []
         aptitudes_avg = []
-        population = self.generate_population(8, seed)
+        population = self.generate_population(indiv_number, seed)
         print("Population: ", population)
 
         while max_it <= it:
             aptitudes = self.calculate_aptitudes(population)
-            
+            roulette_needles = self.gc.define_needle_points(indiv_number)
+            stallions = self.select(aptitudes, population, roulette_needles)
 
     def generate_population(self, indiv_number, _seed):
-        print("Seed: ", _seed)
         seed(_seed)
         population = []
-
         for individual in range(indiv_number):
             population.append(self.gc.get_random_point(_seed))
-
         return population
 
     def calculate_aptitudes(self, population):
         aptitudes = []
-
         for individual in population:
             aptitudes.append(self.gc.func_g_x(individual))
-
         return aptitudes
+
+    def select(self, aptitude, population, needle_points):
+        individuals_score = self.gc.define_individuals_score(aptitude)
+        population_scores = self.gc.group_sort_population_score(
+            population, individuals_score)
+        roulette = self.gc.define_roulette_positions_values(population_scores)
+        selected_individuals = self.gc.select_individuals(
+            roulette, needle_points)
+        return selected_individuals
 
 
 def main():
@@ -186,6 +241,10 @@ def main():
     start_sa_time = time()
     (sa_best_result, sa_cost, end_sa_time) = sa.run_simulated_annealing(T, seed)
     sa_time = end_sa_time - start_sa_time
+
+    start_genetic_time = time()
+    genetic.run_genetic_algorithm(seed, 8, max_it)
+    genetic_time = time() - start_genetic_time
 
     GenericClass.format_table(
         GenericClass, hc_best_result, hc_cost, sa_best_result, sa_cost)
