@@ -198,10 +198,9 @@ class GeneticAlgorithm(object):
             stallions = self.select(aptitudes, population, roulette_needles)
 
     def generate_population(self, indiv_number, _seed):
-        seed(_seed)
         population = []
         for individual in range(indiv_number):
-            population.append(self.gc.get_random_point(_seed))
+            population.append(round(random(), 2))
         return population
 
     def calculate_aptitudes(self, population):
