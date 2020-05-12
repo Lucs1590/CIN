@@ -23,20 +23,20 @@ class GeneticAlgorithm(object):
         while True:
             if goal in population:
                 hamming_distance = self.aux.calculate_hamming(population, goal)
-                aptitude = self.aux.calculate_aptitude(hamming_distance, 14)
+                aptitudes = self.aux.calculate_aptitude(hamming_distance, 14)
                 aptitudes_avg.append(
-                    (reduce(operator.add, aptitude)/len(aptitude)))
-                min_aptitudes.append(min(aptitude))
+                    (reduce(operator.add, aptitudes)/len(aptitudes)))
+                min_aptitudes.append(min(aptitudes))
                 break
             hamming_distance = self.aux.calculate_hamming(population, goal)
             # print("Hamming Distance: ", hamming_distance)
-            aptitude = self.aux.calculate_aptitude(hamming_distance, 14)
+            aptitudes = self.aux.calculate_aptitude(hamming_distance, 14)
             aptitudes_avg.append(
-                (reduce(operator.add, aptitude)/len(aptitude)))
-            min_aptitudes.append(min(aptitude))
+                (reduce(operator.add, aptitudes)/len(aptitudes)))
+            min_aptitudes.append(min(aptitudes))
             # print("Aptitude: ", aptitude)
             roulette_needles = self.aux.define_needle_points(8)
-            stallions = self.select(aptitude, population, roulette_needles)
+            stallions = self.select(aptitudes, population, roulette_needles)
             # print("Selected Individuals: ", stallions)
             new_generation = self.reproduce(stallions)
             # print("New Generetion: ", new_generation)
