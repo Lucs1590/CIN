@@ -12,6 +12,12 @@ from functools import reduce
 
 class GenericClass(object):
 
+    def to_bin(self, int_number):
+        return format(int_number, '#014b')
+
+    def to_number(self, bin_number):
+        return float(bin_number, 2)
+
     def get_random_point(self, _seed):
         seed(_seed)
         return round(random(), 2)
@@ -94,6 +100,20 @@ class GenericClass(object):
                 if needles > individual[0] and needles <= individual[1]:
                     selecteds.append(individual[2])
         return selecteds
+
+    def pair_stallions(self, population):
+        population_pair = []
+        i = 2
+        while i <= len(population):
+            population_pair.append(population[(i-2):i])
+            i += 2
+        return population_pair
+
+    def generate_random_chance(self, population_pair):
+        chances = []
+        for chance in population_pair:
+            chances.append(random())
+        return chances
 
 
 class HillClimbing(object):
@@ -185,17 +205,29 @@ class GeneticAlgorithm(object):
         self.gc = GenericClass()
         self.new_generation = []
 
-    def run_genetic_algorithm(self, seed, indiv_number, it):
-        max_it = 1
+    def run_genetic_algorithm(self, seed, indiv_number, max_it):
+        it = 1
         min_aptitudes = []
         aptitudes_avg = []
         population = self.generate_population(indiv_number, seed)
         print("Population: ", population)
 
-        while max_it <= it:
+        while it < max_it:
             aptitudes = self.calculate_aptitudes(population)
+            aptitudes_avg.append(
+                (reduce(operator.add, aptitudes)/len(aptitudes)))
+            min_aptitudes.append(min(aptitudes))
             roulette_needles = self.gc.define_needle_points(indiv_number)
             stallions = self.select(aptitudes, population, roulette_needles)
+            new_generation = self.reproduce(stallions)
+            mutated_new_generation = self.mutate(new_generation)
+
+            it += 1
+            population = mutated_new_generation
+
+        finished_time = time()
+        self.gc.plot_poits(min_aptitudes, aptitudes_avg)
+        return max(population), max(aptitudes), finished_time
 
     def generate_population(self, indiv_number, _seed):
         population = []
@@ -217,6 +249,50 @@ class GeneticAlgorithm(object):
         selected_individuals = self.gc.select_individuals(
             roulette, needle_points)
         return selected_individuals
+
+    def reproduce(self, stallions):
+        population_pair = self.gc.pair_stallions(stallions)
+        cross_chances = self.gc.generate_random_chance(population_pair)
+        new_generation = self.cross_over(population_pair, cross_chances, 5)
+        return new_generation
+
+    def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
+        self.new_generation = []
+        i = 0
+        while i < len(cross_chances):
+            if cross_chances[i] <= Pc:
+                individuals_pair = self.make_cross_over(
+                    population_pair[i], crop)
+                self.make_new_generation(individuals_pair)
+            else:
+                self.make_new_generation(population_pair[i])
+            i += 1
+        return self.new_generation
+
+    def make_cross_over(self, population_pair, crop):
+        cropped_start = []
+        cropped_end = []
+        for individual in population_pair:
+            individual = self.gc.to_bin(individual)
+            cropped_start.append(individual[2:crop])
+            cropped_end.append(individual[crop:])
+        return [
+            self.gc.to_number("0b" + cropped_start[0] + cropped_end[1]),
+            self.gc.to_number("0b" + cropped_start[1] + cropped_end[0])
+        ]
+
+    def make_new_generation(self, population_pair):
+        for individual in population_pair:
+            self.new_generation.append(individual)
+
+    def mutate(self, population):
+        mutated_list = []
+        for individual in population:
+            random_chance = random()
+            if random_chance <= 0.02:
+                individual = self.gc.disturb_point(individual)
+            mutated_list.append(individual)
+        return mutated_list
 
 
 def main():
