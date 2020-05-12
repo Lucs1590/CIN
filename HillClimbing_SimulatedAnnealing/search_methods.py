@@ -15,7 +15,7 @@ class GenericClass(object):
         return round(random.random(), 2)
 
     def disturb_point(self, point):
-        return float(point + abs(np.random.normal(0, 0.001, 1)))
+        return float(point + np.random.normal(0, 0.001, 1))
 
     def func_g_x(self, x):
         return 2 ** (-2 * ((((x-0.1) / 0.9)) ** 2)) * ((math.sin(5*math.pi*x)) ** 6)
