@@ -8,15 +8,21 @@ from terminaltables import AsciiTable
 from random import randint, random, seed, sample
 import operator
 from functools import reduce
+import struct
+from codecs import decode
 
 
 class GenericClass(object):
+    def bin_to_float(self, b):
+        bf = self.int_to_bytes(int(b, 2), 8)
+        return struct.unpack('>d', bf)[0]
 
-    def to_bin(self, int_number):
-        return format(int_number, '#014b')
+    def int_to_bytes(self, n, length):
+        return decode('%%0%dx' % (length << 1) % n, 'hex')[-length:]
 
-    def to_number(self, bin_number):
-        return float(bin_number, 2)
+    def float_to_bin(self, value):
+        [d] = struct.unpack(">Q", struct.pack(">d", value))
+        return '{:064b}'.format(d)
 
     def get_random_point(self, _seed):
         seed(_seed)
@@ -253,7 +259,7 @@ class GeneticAlgorithm(object):
     def reproduce(self, stallions):
         population_pair = self.gc.pair_stallions(stallions)
         cross_chances = self.gc.generate_random_chance(population_pair)
-        new_generation = self.cross_over(population_pair, cross_chances, 5)
+        new_generation = self.cross_over(population_pair, cross_chances, randint(1, 63))
         return new_generation
 
     def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
@@ -273,12 +279,12 @@ class GeneticAlgorithm(object):
         cropped_start = []
         cropped_end = []
         for individual in population_pair:
-            individual = self.gc.to_bin(individual)
+            individual = self.gc.float_to_bin(individual)
             cropped_start.append(individual[2:crop])
             cropped_end.append(individual[crop:])
         return [
-            self.gc.to_number("0b" + cropped_start[0] + cropped_end[1]),
-            self.gc.to_number("0b" + cropped_start[1] + cropped_end[0])
+            self.gc.bin_to_float(cropped_start[0] + cropped_end[1]),
+            self.gc.bin_to_float(cropped_start[1] + cropped_end[0])
         ]
 
     def make_new_generation(self, population_pair):
