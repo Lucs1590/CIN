@@ -47,11 +47,16 @@ class GenericClass(object):
         plt.ylabel("Resultados")
         plt.show()
 
-    def format_table(self, hc_result, hc_cust, sa_result, sa_cost):
+    def format_table(self,
+                     hc_result, hc_cost, hc_time,
+                     sa_result, sa_cost, sa_time,
+                     gen_result, gen_cost, gen_time
+                     ):
         formated_table = [
-            ["Método", "Resultado x", "Custo"],
-            ["Hill Climbing", hc_result, hc_cust],
-            ["Simulated Annealing", sa_result, sa_cost]
+            ["Método", "Resultado x", "Custo", "Tempo"],
+            ["Hill Climbing", hc_result, hc_cost, hc_time],
+            ["Simulated Annealing", sa_result, sa_cost, sa_time],
+            ["Genetic Algorithm", gen_result, gen_cost, gen_time]
         ]
         table = AsciiTable(formated_table)
         print(table.table)
@@ -213,13 +218,24 @@ class GeneticAlgorithm(object):
 
     def run_genetic_algorithm(self, seed, indiv_number, max_it):
         it = 1
+        it_repeat = 0
         min_aptitudes = []
         aptitudes_avg = []
         population = self.generate_population(indiv_number, seed)
-        print("Population: ", population)
 
         while it < max_it:
+            if (it > 2):
+                it_repeat += 1 if (aptitudes_avg[-1]
+                                   == aptitudes_avg[-2]) else 0
+            if (it_repeat == round(max_it/3)):
+                print("(GN) Motivo de parada: Sem melhorias!")
+                break
+
             aptitudes = self.calculate_aptitudes(population)
+            i = next(('break' for elem in aptitudes if elem > 1), None)
+            if i:
+                print("(GN) Motivo de parada: Aptidão superou o limite!")
+                eval(i)
             aptitudes_avg.append(
                 (reduce(operator.add, aptitudes)/len(aptitudes)))
             min_aptitudes.append(min(aptitudes))
@@ -231,9 +247,10 @@ class GeneticAlgorithm(object):
             it += 1
             population = mutated_new_generation
 
+        print("(GN) Motivo de parada: Número máximo de interações atingido!")
         finished_time = time()
         self.gc.plot_poits(min_aptitudes, aptitudes_avg)
-        return max(population), max(aptitudes), finished_time
+        return max(population), aptitudes_avg[-1], finished_time
 
     def generate_population(self, indiv_number, _seed):
         population = []
@@ -259,7 +276,8 @@ class GeneticAlgorithm(object):
     def reproduce(self, stallions):
         population_pair = self.gc.pair_stallions(stallions)
         cross_chances = self.gc.generate_random_chance(population_pair)
-        new_generation = self.cross_over(population_pair, cross_chances, randint(1, 63))
+        new_generation = self.cross_over(
+            population_pair, cross_chances, randint(1, 63))
         return new_generation
 
     def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
@@ -310,7 +328,7 @@ def main():
 
     hc = HillClimbing()
     sa = SimulatedAnnealing()
-    genetic = GeneticAlgorithm()
+    gen = GeneticAlgorithm()
 
     print("Semente: ", seed)
 
@@ -324,13 +342,15 @@ def main():
     sa_time = end_sa_time - start_sa_time
 
     start_genetic_time = time()
-    genetic.run_genetic_algorithm(seed, 8, max_it)
-    genetic_time = time() - start_genetic_time
+    (gen_best_result, gen_cost, end_genetic_time) = gen.run_genetic_algorithm(
+        seed, 8, max_it)
+    gen_time = end_genetic_time - start_genetic_time
 
-    GenericClass.format_table(
-        GenericClass, hc_best_result, hc_cost, sa_best_result, sa_cost)
-    print("Tempo HC: ", hc_time)
-    print("Tempo SA: ", sa_time)
+    GenericClass.format_table(GenericClass,
+                              hc_best_result, hc_cost, hc_time,
+                              sa_best_result, sa_cost, sa_time,
+                              gen_best_result, gen_cost, gen_time
+                              )
 
 
 if __name__ == "__main__":
