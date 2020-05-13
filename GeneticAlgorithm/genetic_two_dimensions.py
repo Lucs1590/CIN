@@ -27,8 +27,8 @@ class GenericClass(object):
     def disturb_point(self, point):
         return float(point + np.random.normal(0, 0.001, 1))
 
-    def func_g_x(self, x):
-        return 2 ** (-2 * ((((x-0.1) / 0.9)) ** 2)) * ((math.sin(5*math.pi*x)) ** 6)
+    def func_cost(self, x, y):
+        return (1 - x)**2 + 100*(y - x**2)**2
 
     def plot_poits(self,
                    data_1,
@@ -167,7 +167,7 @@ class GeneticAlgorithm(object):
     def calculate_aptitudes(self, population):
         aptitudes = []
         for individual in population:
-            aptitudes.append(self.gc.func_g_x(individual))
+            aptitudes.append(self.gc.func_cost(individual))
         return aptitudes
 
     def select(self, aptitude, population, needle_points):
