@@ -34,17 +34,23 @@ class GenericClass(object):
     def func_g_x(self, x):
         return 2 ** (-2 * ((((x-0.1) / 0.9)) ** 2)) * ((math.sin(5*math.pi*x)) ** 6)
 
-    def plot_poits(self, data_cost, data_result):
-        df = pd.DataFrame({"custo": data_cost, "resultado": data_result})
+    def plot_poits(self,
+                   data_1,
+                   data_2,
+                   title="Custo e Resultado",
+                   label_1="Custo",
+                   label_2="Resultados"
+                   ):
+        df = pd.DataFrame({"custo": data_1, "resultado": data_2})
         plt.subplot(211)
         plt.plot("custo", data=df, color="red")
-        plt.title("Custo e Resultado")
-        plt.ylabel("Custo")
+        plt.title(title)
+        plt.ylabel(label_1)
 
         plt.subplot(212)
         plt.plot("resultado", data=df, color="green")
         plt.xlabel("Interações")
-        plt.ylabel("Resultados")
+        plt.ylabel(label_2)
         plt.show()
 
     def format_table(self,
@@ -249,7 +255,12 @@ class GeneticAlgorithm(object):
 
         print("(GN) Motivo de parada: Número máximo de interações atingido!")
         finished_time = time()
-        self.gc.plot_poits(min_aptitudes, aptitudes_avg)
+        self.gc.plot_poits(min_aptitudes,
+                           aptitudes_avg,
+                           "Aptidão Min. e Aptidão Média",
+                           "Aptidão Min.",
+                           "Aptidão Média"
+                           )
         return max(population), aptitudes_avg[-1], finished_time
 
     def generate_population(self, indiv_number, _seed):
