@@ -331,7 +331,7 @@ class GeneticAlgorithm(object):
 
 
 def main():
-    seed = 1588449669.2848306
+    seed = time()
 
     max_it = 500
     T = 500
