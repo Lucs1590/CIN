@@ -39,7 +39,7 @@ class GenericClass(object):
                    data_2,
                    title="Custo e Resultado",
                    label_1="Custo",
-                   label_2="Resultados"
+                   label_2="Soluções"
                    ):
         df = pd.DataFrame({"custo": data_1, "resultado": data_2})
         plt.subplot(211)
@@ -59,7 +59,7 @@ class GenericClass(object):
                      gen_result, gen_cost, gen_time
                      ):
         formated_table = [
-            ["Método", "Resultado x", "Custo", "Tempo"],
+            ["Método", "Solução(x)", "Custo", "Tempo"],
             ["Hill Climbing", hc_result, hc_cost, hc_time],
             ["Simulated Annealing", sa_result, sa_cost, sa_time],
             ["Genetic Algorithm", gen_result, gen_cost, gen_time]
