@@ -122,7 +122,8 @@ class GeneticAlgorithm(object):
         it_repeat = 0
         min_aptitudes = []
         aptitudes_avg = []
-        population = self.generate_population(indiv_number, seed)
+        population_x = self.generate_population(indiv_number, seed)
+        population_y = self.generate_population(indiv_number, seed)
 
         while it < max_it:
             if (it > 2):
@@ -132,21 +133,31 @@ class GeneticAlgorithm(object):
                 print("(GN) Motivo de parada: Sem melhorias!")
                 break
 
-            aptitudes = self.calculate_aptitudes(population)
-            i = next(('break' for elem in aptitudes if elem > 1), None)
-            if i:
+            aptitudes = self.calculate_aptitudes(population_x, population_y)
+            i = next(('break' for elem in aptitudes if elem > 5), None)
+            """ if i:
                 print("(GN) Motivo de parada: Aptidão superou o limite!")
-                eval(i)
+                break """
             aptitudes_avg.append(
                 (reduce(operator.add, aptitudes)/len(aptitudes)))
             min_aptitudes.append(min(aptitudes))
+
             roulette_needles = self.gc.define_needle_points(indiv_number)
-            stallions = self.select(aptitudes, population, roulette_needles)
-            new_generation = self.reproduce(stallions)
-            mutated_new_generation = self.mutate(new_generation)
+
+            stallions_x = self.select(
+                aptitudes, population_x, roulette_needles)
+            stallions_y = self.select(
+                aptitudes, population_y, roulette_needles)
+
+            new_generation_x = self.reproduce(stallions_x)
+            new_generation_y = self.reproduce(stallions_y)
+
+            mutated_new_generation_x = self.mutate(new_generation_x)
+            mutated_new_generation_y = self.mutate(new_generation_y)
 
             it += 1
-            population = mutated_new_generation
+            population_x = mutated_new_generation_x
+            population_y = mutated_new_generation_y
 
         print("(GN) Motivo de parada: Número máximo de interações atingido!")
         finished_time = time()
@@ -156,7 +167,7 @@ class GeneticAlgorithm(object):
                            "Aptidão Min.",
                            "Aptidão Média"
                            )
-        return max(population), aptitudes_avg[-1], finished_time
+        return max(population_x), aptitudes_avg[-1], finished_time
 
     def generate_population(self, indiv_number, _seed):
         population = []
@@ -164,10 +175,13 @@ class GeneticAlgorithm(object):
             population.append(round(random(), 2))
         return population
 
-    def calculate_aptitudes(self, population):
+    def calculate_aptitudes(self, population_x, population_y):
         aptitudes = []
-        for individual in population:
-            aptitudes.append(self.gc.func_cost(individual))
+        i = 0
+        while i < len(population_x):
+            aptitudes.append(self.gc.func_cost(
+                population_x[i], population_y[i]))
+            i += 1
         return aptitudes
 
     def select(self, aptitude, population, needle_points):
