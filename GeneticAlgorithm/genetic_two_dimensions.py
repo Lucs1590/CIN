@@ -5,7 +5,7 @@ import math
 import numpy as np
 import pandas as pd
 from terminaltables import AsciiTable
-from random import randint, random, seed, sample
+from random import randint, random, seed, sample, choice
 import operator
 from functools import reduce
 import struct
@@ -87,6 +87,14 @@ class GenericClass(object):
             roulette.append([prev_value, degrees, population_score[i][1]])
             prev_value = float(roulette[-1][1])
             i += 1
+
+        if len(roulette) < 8:
+            random_element = choice(roulette)
+            avg = (random_element[1] + random_element[0]) / 2
+            roulette[roulette.index(random_element)] = [
+                avg, random_element[1], random_element[2]]
+            roulette.insert(roulette.index([avg, random_element[1], random_element[2]]), [
+                            random_element[0], avg, random_element[2]])
         return roulette
 
     def select_individuals(self, roulette, roulette_needles):
@@ -134,25 +142,27 @@ class GeneticAlgorithm(object):
                 break
 
             aptitudes = self.calculate_aptitudes(population_x, population_y)
-            i = next(('break' for elem in aptitudes if elem > 5), None)
-            """ if i:
-                print("(GN) Motivo de parada: Aptidão superou o limite!")
-                break """
             aptitudes_avg.append(
                 (reduce(operator.add, aptitudes)/len(aptitudes)))
             min_aptitudes.append(min(aptitudes))
 
-            roulette_needles = self.gc.define_needle_points(indiv_number)
+            i = next(('break' for elem in aptitudes if elem > 5), None)
+            if i:
+                print("(GN) Motivo de parada: Aptidão superou o limite!")
+                break
 
+            roulette_needles_x = self.gc.define_needle_points(indiv_number)
             stallions_x = self.select(
-                aptitudes, population_x, roulette_needles)
+                aptitudes, population_x, roulette_needles_x)
+
+            roulette_needles_y = self.gc.define_needle_points(indiv_number)
             stallions_y = self.select(
-                aptitudes, population_y, roulette_needles)
+                aptitudes, population_y, roulette_needles_y)
 
             new_generation_x = self.reproduce(stallions_x)
-            new_generation_y = self.reproduce(stallions_y)
-
             mutated_new_generation_x = self.mutate(new_generation_x)
+
+            new_generation_y = self.reproduce(stallions_y)
             mutated_new_generation_y = self.mutate(new_generation_y)
 
             it += 1
@@ -178,7 +188,7 @@ class GeneticAlgorithm(object):
     def calculate_aptitudes(self, population_x, population_y):
         aptitudes = []
         i = 0
-        while i < len(population_x):
+        while i <= 5:
             aptitudes.append(self.gc.func_cost(
                 population_x[i], population_y[i]))
             i += 1
