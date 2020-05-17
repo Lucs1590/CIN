@@ -22,7 +22,9 @@ class GeneticAlgorithm(object):
         population = self.generate_population(8)
         print("Population: ", population)
 
-        while True or (i == 2000000):
+        while True:
+            if (i == 2000000):
+                break
             if (i % 100000) == 0:
                 self.aux.plot_save_population(goal, population, i)
             if goal == population:
@@ -39,8 +41,8 @@ class GeneticAlgorithm(object):
             min_aptitudes.append(min(aptitudes))
             roulette_needles = self.aux.define_needle_points(8)
             stallions = self.select(aptitudes, population, roulette_needles)
-            new_generation = self.reproduce(stallions)
-            mutated_new_generation = self.mutate(new_generation)
+            # new_generation = self.reproduce(stallions)
+            mutated_new_generation = self.mutate(stallions)
 
             i += 1
             population = mutated_new_generation
@@ -70,8 +72,7 @@ class GeneticAlgorithm(object):
     def reproduce(self, stallions):
         population_pair = self.aux.pair_stallions(stallions)
         cross_chances = self.aux.generate_random_chance(population_pair)
-        new_generation = self.cross_over(
-            population_pair, cross_chances, randint(3, (len(population_pair[0][0])-1)))
+        new_generation = self.cross_over(population_pair, cross_chances, 6)
         return new_generation
 
     def cross_over(self, population_pair, cross_chances, crop, Pc=0.6):
@@ -114,7 +115,7 @@ class GeneticAlgorithm(object):
 
     def transform_bit(self, bit):
         random_chance = random()
-        if random_chance <= 0.015:
+        if random_chance <= 0.02:
             bit = '0' if bit == '1' else '1'
         return bit
 
