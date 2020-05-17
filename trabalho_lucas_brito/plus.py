@@ -230,14 +230,10 @@ class AuxClass(object):
     def plot_save_population(self, goal, population, i):
         goal = self.to_bin_array(goal)
         population = self.to_bin_array(population)
-
         fig, ax = plt.subplots()
-
         cmap = mpl.colors.ListedColormap(['#ffffff', 'k'])
         bounds = [0., 0.5, 1.]
         norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
-
-        # plot it
         ax.imshow(population, interpolation='none', cmap=cmap, norm=norm)
         plt.savefig('blkwht' + str(i) + '.png')
 
