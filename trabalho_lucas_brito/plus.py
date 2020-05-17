@@ -22,7 +22,7 @@ class GeneticAlgorithm(object):
         population = self.generate_population(8)
         print("Population: ", population)
 
-        while True:
+        while True or (i == 2000000):
             if (i % 100000) == 0:
                 self.aux.plot_save_population(goal, population, i)
             if goal == population:
@@ -45,6 +45,7 @@ class GeneticAlgorithm(object):
             i += 1
             population = mutated_new_generation
 
+        self.aux.plot_save_population(goal, population, i)
         return [population, i, min_aptitudes, aptitudes_avg]
 
     def generate_population(self, indiv_number, _seed=time()):
@@ -113,7 +114,7 @@ class GeneticAlgorithm(object):
 
     def transform_bit(self, bit):
         random_chance = random()
-        if random_chance <= 0.02:
+        if random_chance <= 0.015:
             bit = '0' if bit == '1' else '1'
         return bit
 
@@ -235,7 +236,7 @@ class AuxClass(object):
         bounds = [0., 0.5, 1.]
         norm = mpl.colors.BoundaryNorm(bounds, cmap.N)
         ax.imshow(population, interpolation='none', cmap=cmap, norm=norm)
-        plt.savefig('blkwht' + str(i) + '.png')
+        plt.savefig('blkwht' + str(i/100000) + '.png')
 
     def to_bin_array(self, some_array):
         i = 0
