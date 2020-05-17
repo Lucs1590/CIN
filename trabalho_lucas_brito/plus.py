@@ -239,9 +239,7 @@ class AuxClass(object):
 
         # plot it
         ax.imshow(population, interpolation='none', cmap=cmap, norm=norm)
-
-        plt.savefig(
-            '/home/brito/Documentos/Mestrado/CIN/algoritmos/trabalho_lucas_brito/'+'blkwht' + str(i) + '.png')
+        plt.savefig('blkwht' + str(i) + '.png')
 
     def to_bin_array(self, some_array):
         i = 0
