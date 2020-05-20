@@ -15,16 +15,23 @@ Para simplificar, se quiser executar o exercicio 1, execute:
 python3 exercicio1.py
 ```
 
-Para o exercicio2, execute:
+Para o exercicio 2, execute:
 
 ```
 python3 exercicio2.py
 ```
 
-Para o exercicio2, execute:
+Para o exercicio 3, execute:
 
 ```
 python3 exercicio3.py
 ```
+
+E para o adicional, execute:
+
+```
+python3 plus.py
+```
+
 
 Caso haja alguma dúvida, fique a vontade para falar comigo por lucasbsilva29@gmail.com .
