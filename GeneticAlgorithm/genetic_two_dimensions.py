@@ -1,11 +1,12 @@
 from time import time
 # 1587607351.1839364
+# 1589853324.1593766
 import matplotlib.pyplot as plt
 import math
 import numpy as np
 import pandas as pd
 from terminaltables import AsciiTable
-from random import randint, random, seed, sample, choice
+from random import randint, random, seed, sample, choice, uniform
 import operator
 from functools import reduce
 import struct
@@ -25,7 +26,7 @@ class GenericClass(object):
         return '{:064b}'.format(d)
 
     def disturb_point(self, point):
-        return float(point + np.random.normal(0, 0.001, 1))
+        return float(point - np.random.normal(0, 0.001, 1))
 
     def func_cost(self, x, y):
         return (1 - x)**2 + 100*(y - x**2)**2
@@ -130,10 +131,15 @@ class GeneticAlgorithm(object):
         it_repeat = 0
         min_aptitudes = []
         aptitudes_avg = []
+        population_x_hist = []
+        population_y_hist = []
         population_x = self.generate_population(indiv_number, seed)
         population_y = self.generate_population(indiv_number, seed)
 
         while it < max_it:
+            population_x_hist.append(population_x)
+            population_y_hist.append(population_y)
+
             if (it > 2):
                 it_repeat += 1 if (aptitudes_avg[-1]
                                    == aptitudes_avg[-2]) else 0
@@ -146,9 +152,12 @@ class GeneticAlgorithm(object):
                 (reduce(operator.add, aptitudes)/len(aptitudes)))
             min_aptitudes.append(min(aptitudes))
 
-            i = next(('break' for elem in aptitudes if elem > 5), None)
-            if i:
-                print("(GN) Motivo de parada: Aptidão superou o limite!")
+            i_x = next(
+                ('break' for elem in population_x if elem > 5 or elem < -5), None)
+            i_y = next(
+                ('break' for elem in population_y if elem > 5 or elem < -5), None)
+            if i_x or i_y:
+                print("(GN) Motivo de parada: Individuo superou o limite!")
                 break
 
             roulette_needles_x = self.gc.define_needle_points(indiv_number)
@@ -171,18 +180,21 @@ class GeneticAlgorithm(object):
 
         print("(GN) Motivo de parada: Número máximo de interações atingido!")
         finished_time = time()
+        best_x = population_x_hist[min_aptitudes.index(min(min_aptitudes))]
+        best_y = population_y_hist[min_aptitudes.index(min(min_aptitudes))]
+
         self.gc.plot_poits(min_aptitudes,
                            aptitudes_avg,
                            "Aptidão Min. e Aptidão Média",
                            "Aptidão Min.",
                            "Aptidão Média"
                            )
-        return max(population_x), aptitudes_avg[-1], finished_time
+        return round(min(best_x), 2), round(min(best_y), 2), round(self.gc.func_cost(min(best_x), min(best_y)), 2), finished_time
 
     def generate_population(self, indiv_number, _seed):
         population = []
         for individual in range(indiv_number):
-            population.append(round(random(), 2))
+            population.append(round(uniform(-5, 5), 2))
         return population
 
     def calculate_aptitudes(self, population_x, population_y):
@@ -195,7 +207,9 @@ class GeneticAlgorithm(object):
         return aptitudes
 
     def select(self, aptitude, population, needle_points):
+        population.sort(reverse=True)
         individuals_score = self.gc.define_individuals_score(aptitude)
+        individuals_score.sort()
         population_scores = self.gc.group_sort_population_score(
             population, individuals_score)
         roulette = self.gc.define_roulette_positions_values(population_scores)
@@ -255,9 +269,13 @@ def main():
     gen = GeneticAlgorithm()
 
     start_genetic_time = time()
-    (gen_best_result, gen_cost, end_genetic_time) = gen.run_genetic_algorithm(
+    (best_result_x, best_result_y, cost, end_genetic_time) = gen.run_genetic_algorithm(
         seed, 8, max_it)
     gen_time = end_genetic_time - start_genetic_time
+    print("Tempo: ", gen_time)
+    print("Individuo X: ", best_result_x)
+    print("Individuo Y: ", best_result_y)
+    print("f(x,y): ", cost)
 
 
 if __name__ == "__main__":
