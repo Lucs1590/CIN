@@ -1,0 +1,3 @@
+class Wine(object):
+    def __init__(self):
+        ...
