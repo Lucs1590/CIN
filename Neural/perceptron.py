@@ -1,0 +1,2 @@
+class Perceptron(object):
+    pass
