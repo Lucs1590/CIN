@@ -10,14 +10,12 @@ def main():
 
 
 def execute_iris(aux, perceptron):
-    iris_data = aux.read_datas(
-        "/home/brito/Documentos/Mestrado/CIN/algoritmos/Neural/iris/iris.data")
+    iris_data = aux.read_datas("Neural/iris/iris.data")
     print(iris_data)
 
 
 def execute_wine(aux, perceptron):
-    wine_data = aux.read_datas(
-        "/home/brito/Documentos/Mestrado/CIN/algoritmos/Neural/iris/iris.data")
+    wine_data = aux.read_datas("Neural/wine/wine.data")
     print(wine_data)
 
 
