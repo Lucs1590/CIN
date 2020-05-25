@@ -5,6 +5,7 @@ from time import time
 
 def main():
     seed = time()
+    print("Seed: ", seed)
     aux = AuxiliaryClass()
     perceptron = Perceptron()
     execute_iris(aux, perceptron, seed)
@@ -17,7 +18,7 @@ def execute_iris(aux, perceptron, seed):
         iris_data, ["sepal_length", "sepal_width", "petal_length", "petal_width", "class"])
     (train_dataset, test_dataset, validation_dataset) = aux.divide_dataset(
         iris_data, 0.7, 0.2, 0.1, seed)
-    print(train_dataset)
+    perceptron.run_perceptron(train_dataset, test_dataset, validation_dataset)
 
 
 def execute_wine(aux, perceptron, seed):
