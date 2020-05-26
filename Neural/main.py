@@ -17,7 +17,7 @@ def execute_iris(aux, perceptron, seed):
     iris_data = aux.define_dataframe_column(
         iris_data, ["sepal_length", "sepal_width", "petal_length", "petal_width", "class"])
     (train_dataset, test_dataset, validation_dataset) = aux.divide_dataset(
-        iris_data, 0.7, 0.2, 0.1, seed)
+        iris_data, 0.7, 0.15, 0.15, seed)
     perceptron.run_perceptron(train_dataset, test_dataset, validation_dataset)
 
 
