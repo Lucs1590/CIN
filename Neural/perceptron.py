@@ -6,7 +6,10 @@ class Perceptron(object):
     def run_perceptron(self, train_ds, test_ds, validation_ds, max_it):
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
-        weights = self.define_weights(train_ds, castes)
+        (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
+        weights = self.define_weights(inputs, castes)
+
+        abc = self.predict(train_ds, weights)
 
         it = 0
 
@@ -23,9 +26,13 @@ class Perceptron(object):
         clusters = dataset[column_name].unique()
         return list(clusters)
 
+    def define_expecteds_and_inputs(self, dataset, column_name="class"):
+        expected = dataset.pop(column_name)
+        return dataset, expected
+
     def define_weights(self, dataset, castes):
         weights = []
-        for column in range(len(dataset.columns) - 1):
+        for column in range(len(dataset.columns)):
             i = 0
             list_of_weights = []
 
@@ -34,4 +41,8 @@ class Perceptron(object):
                 i += 1
             weights.append(list_of_weights)
 
-        return weights
+        return np.array(weights)
+
+    def predict(self, inputs, weights):
+        weights_inputs = np.dot(inputs.values, weights)
+        return weights_inputs.sum(axis=1)
