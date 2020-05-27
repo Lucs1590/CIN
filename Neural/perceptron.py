@@ -45,4 +45,4 @@ class Perceptron(object):
 
     def predict(self, inputs, weights):
         weights_inputs = np.dot(inputs.values, weights)
-        return weights_inputs.sum(axis=1)
+        return weights_inputs
