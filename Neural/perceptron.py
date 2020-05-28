@@ -6,10 +6,15 @@ class Perceptron(object):
     def run_perceptron(self, train_ds, test_ds, validation_ds, max_it):
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
+        neuron_castes = self.define_neuron(castes)
+
         (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
         weights = self.define_weights(inputs, castes)
 
         abc = self.predict(train_ds, weights)
+        # fazer classificação de [001], [010], [100] com abc
+        # calcular erro
+        # entrar no loop para adaptar bias e erro
 
         it = 0
 
@@ -25,6 +30,21 @@ class Perceptron(object):
     def define_castes(self, dataset, column_name="class"):
         clusters = dataset[column_name].unique()
         return list(clusters)
+
+    def define_neuron(self, castes):
+        base = []
+        castes_neuron = {}
+        i = 0
+
+        for caste in range(len(castes)):
+            base.append([0] * len(castes))
+
+        while i < len(castes):
+            base[i][i] = 1
+            castes_neuron[castes[i]] = base[i]
+            i += 1
+
+        return castes_neuron
 
     def define_expecteds_and_inputs(self, dataset, column_name="class"):
         expected = dataset.pop(column_name)

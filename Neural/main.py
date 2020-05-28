@@ -12,7 +12,7 @@ def main():
     print("Seed: ", seed)
 
     execute_iris(aux, perceptron, seed, max_it)
-    # execute_wine(aux, perceptron, seed)
+    execute_wine(aux, perceptron, seed, max_it)
 
 
 def execute_iris(aux, perceptron, seed, max_it):
