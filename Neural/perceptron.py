@@ -1,4 +1,5 @@
 import numpy as np
+from random import uniform
 
 
 class Perceptron(object):
@@ -11,8 +12,9 @@ class Perceptron(object):
         (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
         weights = self.define_weights(inputs, castes)
 
-        abc = self.predict(train_ds, weights)
-        # fazer classificação de [001], [010], [100] com abc
+        predicted_values = self.predict(train_ds, weights)
+        activated_neurons = self.activate_neurons(predicted_values)
+
         # calcular erro
         # entrar no loop para adaptar bias e erro
 
@@ -57,7 +59,7 @@ class Perceptron(object):
             list_of_weights = []
 
             while i < len(castes):
-                list_of_weights.append(float(np.random.normal(0, 0.001, 1)))
+                list_of_weights.append(uniform(-1, 1))
                 i += 1
             weights.append(list_of_weights)
 
@@ -66,3 +68,13 @@ class Perceptron(object):
     def predict(self, inputs, weights):
         weights_inputs = np.dot(inputs.values, weights)
         return weights_inputs
+
+    def activate_neurons(self, predicted_values):
+        row = 0
+        while row < len(predicted_values):
+            value = 0
+            while value < len(predicted_values[row]):
+                predicted_values[row][value] = 1 if predicted_values[row][value] >= 0 else 0
+                value += 1
+            row += 1
+        return predicted_values
