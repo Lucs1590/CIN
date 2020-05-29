@@ -18,7 +18,7 @@ class Perceptron(object):
 
         it = 0
 
-        while it <= max_it and 0 in errors:
+        while it <= max_it and 0 not in errors:
             it += 1
 
     def add_bias(self, dataset):
