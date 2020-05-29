@@ -12,17 +12,13 @@ class Perceptron(object):
         (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
         weights = self.define_weights(inputs, castes)
 
-        predicted_values = self.predict(train_ds, weights)
-        activated_neurons = self.activate_neurons(predicted_values)
-
-        # calcular erro
+        predicted = self.activate_neurons(self.predict(train_ds, weights))
+        errors = self.define_error(neuron_castes, expected, predicted)
         # entrar no loop para adaptar bias e erro
 
         it = 0
 
-        error = 0
-
-        while it <= max_it and error >= 0:
+        while it <= max_it and 0 in errors:
             it += 1
 
     def add_bias(self, dataset):
@@ -78,3 +74,20 @@ class Perceptron(object):
                 value += 1
             row += 1
         return predicted_values
+
+    def define_error(self, neuron_caste, expected, predicted):
+        i = 0
+        errors = []
+
+        while i < len(expected):
+            translated_expected = np.array(neuron_caste[expected.iloc[i]])
+            error = 0
+            i2 = 0
+
+            while i2 < len(predicted[i]):
+                error += 1 if predicted[i][i2] == translated_expected[i2] else 0
+                i2 += 1
+            errors.append(error)
+            i += 1
+
+        return errors
