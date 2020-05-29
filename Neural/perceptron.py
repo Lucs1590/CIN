@@ -4,7 +4,7 @@ from random import uniform
 
 class Perceptron(object):
 
-    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it):
+    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.01):
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
         neuron_castes = self.define_neuron(castes)
@@ -19,6 +19,11 @@ class Perceptron(object):
         it = 0
 
         while it <= max_it and 0 not in errors:
+
+            weights = self.update_weights()
+            self.update_bias()
+            errors = self.sum_error()
+
             it += 1
 
     def add_bias(self, dataset):
@@ -91,3 +96,12 @@ class Perceptron(object):
             i += 1
 
         return errors
+
+    def update_weights(self):
+        ...
+
+    def update_bias(self):
+        ...
+
+    def sum_error(self):
+        ...
