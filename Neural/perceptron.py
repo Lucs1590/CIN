@@ -3,6 +3,7 @@ from random import uniform
 import operator
 from functools import reduce
 from aux import AuxiliaryClass
+# 1591900970.2312458
 
 
 class Perceptron(object):
@@ -10,6 +11,8 @@ class Perceptron(object):
         self.aux = AuxiliaryClass()
 
     def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.01):
+        print("Learning Rate: ", learning_rate)
+
         errors_list = []
         errors_avg_list = []
 
