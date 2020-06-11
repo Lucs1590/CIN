@@ -3,6 +3,8 @@ from random import uniform
 import operator
 from functools import reduce
 import math
+from sklearn import preprocessing
+import copy
 from aux import AuxiliaryClass
 # 1591900970.2312458
 
@@ -11,7 +13,7 @@ class Perceptron(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, type_execution, learning_rate=0.009):
+    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, type_execution, learning_rate=0.0001):
         print("Learning Rate: ", learning_rate)
 
         errors_list = []
@@ -26,6 +28,8 @@ class Perceptron(object):
         (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
         weights = self.define_weights(inputs, castes)
 
+        inputs = preprocessing.normalize(inputs)
+
         error_sum = 1
         it = 0
 
@@ -35,8 +39,8 @@ class Perceptron(object):
             real_error_sum = 0
             correct_predictions = 0
 
-            while i < len(train_ds):
-                input_i = train_ds.values[i]
+            while i < len(inputs):
+                input_i = inputs[i]
 
                 input_weight = self.predict(input_i, weights)
                 predicted, sigmoidal_values = self.activate_neurons(
@@ -48,8 +52,8 @@ class Perceptron(object):
                     if error > 0:
                         weights = self.update_weights(
                             weights, real_error, learning_rate, predicted)
-                        train_ds = self.update_bias(
-                            real_error, learning_rate, train_ds)
+                        inputs = self.update_bias(
+                            real_error, learning_rate, inputs)
                     else:
                         correct_predictions += 1
                 error_sum += error
@@ -92,8 +96,9 @@ class Perceptron(object):
         return castes_neuron
 
     def define_expecteds_and_inputs(self, dataset, column_name="class"):
-        expected = dataset.pop(column_name)
-        return dataset, expected
+        final_dataset = copy.deepcopy(dataset)
+        expected = final_dataset.pop(column_name)
+        return final_dataset, expected
 
     def define_weights(self, dataset, castes):
         weights = []
@@ -139,5 +144,8 @@ class Perceptron(object):
         return weights + predicted
 
     def update_bias(self, error, learning_rate, dataset):
-        dataset["bias"] = dataset["bias"].values + error + learning_rate
+        i = 0
+        while i < len(dataset[:, -1]):
+            dataset[:, -1][i] = dataset[:, -1][i] + (error * learning_rate)
+            i += 1
         return dataset
