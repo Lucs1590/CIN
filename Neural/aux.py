@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 
 
 class AuxiliaryClass(object):
@@ -22,6 +23,20 @@ class AuxiliaryClass(object):
         ]
         validation_dataset = dataset.iloc[
             len(test_dataset.index):
-            len(test_dataset.index) + round(len(dataset.index) * validation_percent)
+            len(test_dataset.index) +
+                round(len(dataset.index) * validation_percent)
         ]
         return train_dataset, test_dataset, validation_dataset
+
+    def plot_error(self, errors, error_avg):
+        df = pd.DataFrame({"errors": errors, "error_avg": error_avg})
+        plt.subplot(211)
+        plt.plot("errors", data=df, color="red")
+        plt.title("Erros & Error Avg.")
+        plt.ylabel("Error")
+
+        plt.subplot(212)
+        plt.plot("error_avg", data=df, color="green")
+        plt.xlabel("Interactions")
+        plt.ylabel("Error Avg.")
+        plt.show()
