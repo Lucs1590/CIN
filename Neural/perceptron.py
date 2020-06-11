@@ -11,7 +11,7 @@ class Perceptron(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.009):
+    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, type_execution, learning_rate=0.009):
         print("Learning Rate: ", learning_rate)
 
         errors_list = []
@@ -35,14 +35,17 @@ class Perceptron(object):
                 input_i = train_ds.values[i]
 
                 input_weight = self.predict(input_i, weights)
-                predicted = self.activate_neurons(input_weight)
-                error = self.define_error(
-                    neuron_castes, expected.values[i], predicted)
+                predicted, sigmoidal_values = self.activate_neurons(
+                    input_weight)
+                error, real_error = self.define_error(
+                    neuron_castes, expected.values[i], predicted, sigmoidal_values)
 
                 if error > 0:
-                    weights = self.update_weights(
-                        weights, error, learning_rate, predicted)
-                    train_ds = self.update_bias(error, learning_rate, train_ds)
+                    if type_execution == 'train':
+                        weights = self.update_weights(
+                            weights, real_error, learning_rate, predicted)
+                        train_ds = self.update_bias(
+                            real_error, learning_rate, train_ds)
 
                 error_sum += error
                 i += 1
@@ -99,25 +102,31 @@ class Perceptron(object):
         weights_inputs = np.dot(inputs, weights)
         return weights_inputs
 
-    def activate_neurons(self, predicted_values):
+    def activate_neurons(self, sigmoidal_values):
         value = 0
-        predicted_values = list(1 / (1 + math.e ** -predicted_values))
-        new_predicted_values = [0] * len(predicted_values)
-        new_predicted_values[predicted_values.index(max(predicted_values))] = 1
-        return new_predicted_values
+        sigmoidal_values = list(1 / (1 + math.e ** -sigmoidal_values))
+        new_predicted_values = [0] * len(sigmoidal_values)
+        new_predicted_values[sigmoidal_values.index(max(sigmoidal_values))] = 1
+        return new_predicted_values, sigmoidal_values
 
-    def define_error(self, neuron_caste, expected, predicted):
+    def define_error(self, neuron_caste, expected, predicted, sigmoidal_values):
         i = 0
         error = 0
+        sum_real_error = 0
         translated_expected = np.array(neuron_caste[expected])
 
         while i < len(predicted):
             error += 0 if predicted[i] == translated_expected[i] else 1
+            sum_real_error += abs(translated_expected[i] - sigmoidal_values[i])
             i += 1
-        return error
+        return error, float(sum_real_error)
 
     def update_weights(self, weights, error, learning_rate, predicted):
-        return weights + learning_rate * error * predicted
+        i = 0
+        while i < len(predicted):
+            predicted[i] = error * learning_rate * predicted[i]
+            i += 1
+        return weights + predicted
 
     def update_bias(self, error, learning_rate, dataset):
         dataset["bias"] = dataset["bias"].values + error + learning_rate
