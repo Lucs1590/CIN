@@ -25,6 +25,7 @@ class Perceptron(object):
 
         while it <= max_it and error_sum >= 0:
             i = 0
+            error_sum = 0
 
             while i < len(train_ds):
                 input_i = train_ds.values[i]
@@ -39,18 +40,18 @@ class Perceptron(object):
                         weights, error, learning_rate, predicted)
                     train_ds = self.update_bias(error, learning_rate, train_ds)
 
-                # error_sum = reduce(operator.add, errors)
-
-                errors_list.append(error_sum)
-                errors_avg_list.append(error_sum/len(errors))
-
+                error_sum += error
                 i += 1
+
+            errors_list.append(error_sum)
+            errors_avg_list.append(error_sum/len(train_ds))
+
             it += 1
 
         self.aux.plot_error(errors_list, errors_avg_list)
 
     def add_bias(self, dataset):
-        dataset['bias'] = 0
+        dataset['bias'] = 1
         return dataset
 
     def define_castes(self, dataset, column_name="class"):
