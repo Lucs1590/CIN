@@ -10,7 +10,7 @@ class Perceptron(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.01):
+    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.009):
         print("Learning Rate: ", learning_rate)
 
         errors_list = []
@@ -88,7 +88,7 @@ class Perceptron(object):
             list_of_weights = []
 
             while i < len(castes):
-                list_of_weights.append(uniform(0.001, 1))
+                list_of_weights.append(uniform(0.1, 1))
                 i += 1
             weights.append(list_of_weights)
 

@@ -8,10 +8,12 @@ def main():
     perceptron = Perceptron()
 
     seed = time()
-    max_it = 50
+    max_it = 250
     print("Seed: ", seed)
 
     execute_iris(aux, perceptron, seed, max_it)
+
+    print("\nSeed: ", seed)
     execute_wine(aux, perceptron, seed, max_it)
 
 
