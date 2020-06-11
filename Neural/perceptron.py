@@ -24,17 +24,27 @@ class Perceptron(object):
         it = 0
 
         while it <= max_it and error_sum >= 0:
-            predicted = self.activate_neurons(self.predict(train_ds, weights))
-            errors = self.define_error(neuron_castes, expected, predicted)
-            weights = self.update_weights(
-                weights, errors, learning_rate, predicted)
-            train_ds = self.update_bias(errors, learning_rate, train_ds)
+            i = 0
 
-            error_sum = reduce(operator.add, errors)
+            while i < len(train_ds):
+                input_i = train_ds.values[i]
 
-            errors_list.append(error_sum)
-            errors_avg_list.append(error_sum/len(errors))
+                input_weight = self.predict(input_i, weights)
+                predicted = self.activate_neurons(input_weight)
+                error = self.define_error(
+                    neuron_castes, expected.values[i], predicted)
 
+                if error > 0:
+                    weights = self.update_weights(
+                        weights, error, learning_rate, predicted)
+                    train_ds = self.update_bias(error, learning_rate, train_ds)
+
+                # error_sum = reduce(operator.add, errors)
+
+                errors_list.append(error_sum)
+                errors_avg_list.append(error_sum/len(errors))
+
+                i += 1
             it += 1
 
         self.aux.plot_error(errors_list, errors_avg_list)
@@ -80,39 +90,29 @@ class Perceptron(object):
         return np.array(weights)
 
     def predict(self, inputs, weights):
-        weights_inputs = np.dot(inputs.values, weights)
+        weights_inputs = np.dot(inputs, weights)
         return weights_inputs
 
     def activate_neurons(self, predicted_values):
-        row = 0
-        while row < len(predicted_values):
-            value = 0
-            while value < len(predicted_values[row]):
-                predicted_values[row][value] = 1 if predicted_values[row][value] >= 0 else 0
-                value += 1
-            row += 1
+        value = 0
+        while value < len(predicted_values):
+            predicted_values[value] = 1 if predicted_values[value] >= 0 else 0
+            value += 1
         return predicted_values
 
     def define_error(self, neuron_caste, expected, predicted):
         i = 0
-        errors = []
+        error = 0
+        translated_expected = np.array(neuron_caste[expected])
 
-        while i < len(expected):
-            translated_expected = np.array(neuron_caste[expected.iloc[i]])
-            error = 0
-            i2 = 0
-
-            while i2 < len(predicted[i]):
-                error += 1 if predicted[i][i2] == translated_expected[i2] else 0
-                i2 += 1
-            errors.append(error)
+        while i < len(predicted):
+            error += 0 if predicted[i] == translated_expected[i] else 1
             i += 1
+        return error
 
-        return np.array(errors)
+    def update_weights(self, weights, error, learning_rate, predicted):
+        return weights + learning_rate * error * predicted
 
-    def update_weights(self, weights, errors, learning_rate, predicted):
-        return weights + np.dot(learning_rate * errors, predicted)
-
-    def update_bias(self, errors, learning_rate, dataset):
-        dataset["bias"] = dataset["bias"].values + errors + learning_rate
+    def update_bias(self, error, learning_rate, dataset):
+        dataset["bias"] = dataset["bias"].values + error + learning_rate
         return dataset
