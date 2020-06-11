@@ -2,11 +2,17 @@ import numpy as np
 from random import uniform
 import operator
 from functools import reduce
+from aux import AuxiliaryClass
 
 
 class Perceptron(object):
+    def __init__(self):
+        self.aux = AuxiliaryClass()
 
     def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, learning_rate=0.01):
+        errors_list = []
+        errors_avg_list = []
+
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
         neuron_castes = self.define_neuron(castes)
@@ -26,7 +32,12 @@ class Perceptron(object):
 
             error_sum = reduce(operator.add, errors)
 
+            errors_list.append(error_sum)
+            errors_avg_list.append(error_sum/len(errors))
+
             it += 1
+
+        self.aux.plot_error(errors_list, errors_avg_list)
 
     def add_bias(self, dataset):
         dataset['bias'] = 0
@@ -105,6 +116,3 @@ class Perceptron(object):
     def update_bias(self, errors, learning_rate, dataset):
         dataset["bias"] = dataset["bias"].values + errors + learning_rate
         return dataset
-
-    def sum_error(self):
-        ...
