@@ -8,7 +8,7 @@ def main():
     perceptron = Perceptron()
 
     seed = time()
-    max_it = 5000
+    max_it = 500
     print("Seed: ", seed)
 
     execute_iris(aux, perceptron, seed, max_it)
