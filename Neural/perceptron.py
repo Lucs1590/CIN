@@ -1,5 +1,7 @@
 import numpy as np
 from random import uniform
+import operator
+from functools import reduce
 
 
 class Perceptron(object):
@@ -13,20 +15,16 @@ class Perceptron(object):
         weights = self.define_weights(inputs, castes)
 
         error_sum = 1
-        # entrar no loop para adaptar bias e erro
-
         it = 0
 
-        while it <= max_it and error_sum > 0:
-            error_sum = 0
-
+        while it <= max_it and error_sum >= 0:
             predicted = self.activate_neurons(self.predict(train_ds, weights))
             errors = self.define_error(neuron_castes, expected, predicted)
             weights = self.update_weights(
                 weights, errors, learning_rate, predicted)
             train_ds = self.update_bias(errors, learning_rate, train_ds)
 
-            # error_sum = self.sum_error()
+            error_sum = reduce(operator.add, errors)
 
             it += 1
 
