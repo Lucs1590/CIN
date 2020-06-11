@@ -2,6 +2,7 @@ import numpy as np
 from random import uniform
 import operator
 from functools import reduce
+import math
 from aux import AuxiliaryClass
 # 1591900970.2312458
 
@@ -100,10 +101,10 @@ class Perceptron(object):
 
     def activate_neurons(self, predicted_values):
         value = 0
-        while value < len(predicted_values):
-            predicted_values[value] = 1 if predicted_values[value] >= 0 else 0
-            value += 1
-        return predicted_values
+        predicted_values = list(1 / (1 + math.e ** -predicted_values))
+        new_predicted_values = [0] * len(predicted_values)
+        new_predicted_values[predicted_values.index(max(predicted_values))] = 1
+        return new_predicted_values
 
     def define_error(self, neuron_caste, expected, predicted):
         i = 0
