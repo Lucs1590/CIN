@@ -51,6 +51,7 @@ class Perceptron(object):
 
             it += 1
 
+        self.aux.show_results(errors_list, errors_avg_list)
         self.aux.plot_error(errors_list, errors_avg_list)
 
     def add_bias(self, dataset):
@@ -87,7 +88,7 @@ class Perceptron(object):
             list_of_weights = []
 
             while i < len(castes):
-                list_of_weights.append(uniform(-1, 1))
+                list_of_weights.append(uniform(0.001, 1))
                 i += 1
             weights.append(list_of_weights)
 
