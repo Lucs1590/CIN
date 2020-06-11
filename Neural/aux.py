@@ -40,3 +40,9 @@ class AuxiliaryClass(object):
         plt.xlabel("Interactions")
         plt.ylabel("Error Avg.")
         plt.show()
+
+    def plot_dataset(self, *campos):
+        ...
+
+    def make_confusion_matrix(self, true_p, true_n, false_p, false_n):
+        ...
