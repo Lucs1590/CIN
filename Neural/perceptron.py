@@ -16,6 +16,8 @@ class Perceptron(object):
 
         errors_list = []
         errors_avg_list = []
+        real_error_list = []
+        correct_predictions_list = []
 
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
@@ -30,6 +32,8 @@ class Perceptron(object):
         while it <= max_it and error_sum >= 0:
             i = 0
             error_sum = 0
+            real_error_sum = 0
+            correct_predictions = 0
 
             while i < len(train_ds):
                 input_i = train_ds.values[i]
@@ -40,23 +44,29 @@ class Perceptron(object):
                 error, real_error = self.define_error(
                     neuron_castes, expected.values[i], predicted, sigmoidal_values)
 
-                if error > 0:
-                    if type_execution == 'train':
+                if type_execution == 'train':
+                    if error > 0:
                         weights = self.update_weights(
                             weights, real_error, learning_rate, predicted)
                         train_ds = self.update_bias(
                             real_error, learning_rate, train_ds)
-
+                    else:
+                        correct_predictions += 1
                 error_sum += error
+                real_error_sum += real_error
+
                 i += 1
 
+            correct_predictions_list.append(correct_predictions)
             errors_list.append(error_sum)
+            real_error_list.append(real_error_sum)
             errors_avg_list.append(error_sum/len(train_ds))
 
             it += 1
 
-        self.aux.show_results(errors_list, errors_avg_list)
-        self.aux.plot_error(errors_list, errors_avg_list)
+        self.aux.show_results(
+            real_error_list, errors_avg_list, correct_predictions)
+        self.aux.plot_error(real_error_list, errors_avg_list)
 
     def add_bias(self, dataset):
         dataset['bias'] = 1

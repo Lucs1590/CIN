@@ -47,6 +47,7 @@ class AuxiliaryClass(object):
     def make_confusion_matrix(self, true_p, true_n, false_p, false_n):
         ...
 
-    def show_results(self, errors_list, errors_avg_list):
+    def show_results(self, errors_list, errors_avg_list, correct_predictions):
         print("Min. Error: ", min(errors_list))
         print("Min. Avg. Error: ", min(errors_avg_list))
+        print("Last Correct Predictions: ", correct_predictions)
