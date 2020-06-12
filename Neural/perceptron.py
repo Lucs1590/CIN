@@ -6,6 +6,8 @@ import math
 from sklearn import preprocessing
 import copy
 from aux import AuxiliaryClass
+from sklearn.metrics import confusion_matrix
+
 # 1591900970.2312458
 
 
@@ -13,19 +15,18 @@ class Perceptron(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def run_perceptron(self, train_ds, test_ds, validation_ds, max_it, type_execution, learning_rate=0.0001):
+    def run_perceptron(self, train_ds, max_it, type_execution, learning_rate=0.0001):
         print("Learning Rate: ", learning_rate)
 
-        errors_list = []
+        lot_matix = []
         errors_avg_list = []
         real_error_list = []
-        correct_predictions_list = []
 
         train_ds = self.add_bias(train_ds)
         castes = self.define_castes(train_ds)
         neuron_castes = self.define_neuron(castes)
 
-        (inputs, expected) = self.define_expecteds_and_inputs(train_ds)
+        (inputs, expecteds) = self.define_expecteds_and_inputs(train_ds)
         weights = self.define_weights(inputs, castes)
 
         inputs = preprocessing.normalize(inputs)
@@ -33,11 +34,13 @@ class Perceptron(object):
         error_sum = 1
         it = 0
 
-        while it <= max_it and error_sum >= 0:
+        while it < max_it and error_sum >= 0:
             i = 0
             error_sum = 0
             real_error_sum = 0
             correct_predictions = 0
+            predicteds = []
+            weights_list = []
 
             while i < len(inputs):
                 input_i = inputs[i]
@@ -45,8 +48,12 @@ class Perceptron(object):
                 input_weight = self.predict(input_i, weights)
                 predicted, sigmoidal_values = self.activate_neurons(
                     input_weight)
+
+                predicteds.append(copy.deepcopy(predicted))
+                weights_list.append(weights)
+
                 error, real_error = self.define_error(
-                    neuron_castes, expected.values[i], predicted, sigmoidal_values)
+                    neuron_castes, expecteds.values[i], predicted, sigmoidal_values)
 
                 if type_execution == 'train':
                     if error > 0:
@@ -56,20 +63,25 @@ class Perceptron(object):
                             real_error, learning_rate, inputs)
                     else:
                         correct_predictions += 1
+
                 error_sum += error
                 real_error_sum += real_error
 
                 i += 1
 
-            correct_predictions_list.append(correct_predictions)
-            errors_list.append(error_sum)
+            lot_matix.append(confusion_matrix(
+                expecteds, self.translate_predicteds(predicteds, neuron_castes)))
             real_error_list.append(real_error_sum)
             errors_avg_list.append(error_sum/len(train_ds))
 
             it += 1
 
+        min_error = real_error_list.index(min(real_error_list))
+        best_weights = weights_list[min_error]
+        best_conf_matrix = lot_matix[min_error]
+
         self.aux.show_results(
-            real_error_list, errors_avg_list, correct_predictions)
+            real_error_list, errors_avg_list, correct_predictions, best_conf_matrix, best_weights)
         self.aux.plot_error(real_error_list, errors_avg_list)
 
     def add_bias(self, dataset):
@@ -149,3 +161,16 @@ class Perceptron(object):
             dataset[:, -1][i] = dataset[:, -1][i] + (error * learning_rate)
             i += 1
         return dataset
+
+    def translate_predicteds(self, predicted, castes):
+        i = 0
+        while i < len(predicted):
+            for clss in castes:
+                if predicted[i] == castes[clss]:
+                    predicted[i] = clss
+            i += 1
+
+        return predicted
+
+    def generate_matrix(self, expecteds, predicteds):
+        return
