@@ -83,6 +83,7 @@ class Perceptron(object):
         self.aux.show_results(
             real_error_list, errors_avg_list, correct_predictions, best_conf_matrix, best_weights)
         self.aux.plot_error(real_error_list, errors_avg_list)
+        return best_weights
 
     def add_bias(self, dataset):
         dataset['bias'] = 1
@@ -174,3 +175,51 @@ class Perceptron(object):
 
     def generate_matrix(self, expecteds, predicteds):
         return
+
+    def test(self, dataset, weights):
+        lot_matix = []
+        errors_avg_list = []
+        real_error_list = []
+
+        dataset = self.add_bias(dataset)
+        castes = self.define_castes(dataset)
+        neuron_castes = self.define_neuron(castes)
+
+        (inputs, expecteds) = self.define_expecteds_and_inputs(dataset)
+        inputs = preprocessing.normalize(inputs)
+
+        i = 0
+        error_sum = 0
+        real_error_sum = 0
+        correct_predictions = 0
+        predicteds = []
+        weights_list = []
+
+        while i < len(inputs):
+            input_i = inputs[i]
+
+            input_weight = self.predict(input_i, weights)
+            predicted, sigmoidal_values = self.activate_neurons(
+                input_weight)
+
+            predicteds.append(copy.deepcopy(predicted))
+            weights_list.append(weights)
+
+            error, real_error = self.define_error(
+                neuron_castes, expecteds.values[i], predicted, sigmoidal_values)
+
+            error_sum += error
+            real_error_sum += real_error
+
+            i += 1
+
+        lot_matix.append(confusion_matrix(
+            expecteds, self.translate_predicteds(predicteds, neuron_castes)))
+        real_error_list.append(real_error_sum)
+        errors_avg_list.append(error_sum/len(dataset))
+
+        min_error = real_error_list.index(min(real_error_list))
+        best_weights = weights_list[min_error]
+        best_conf_matrix = lot_matix[min_error]
+        self.aux.show_results(real_error_list, errors_avg_list,
+                              correct_predictions, best_conf_matrix, best_weights)

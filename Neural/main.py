@@ -23,7 +23,9 @@ def execute_iris(aux, perceptron, seed, max_it):
         iris_data, ["sepal_length", "sepal_width", "petal_length", "petal_width", "class"])
     (train_dataset, test_dataset, validation_dataset) = aux.divide_dataset(
         iris_data, 0.7, 0.15, 0.15, seed)
-    perceptron.run_perceptron(train_dataset, max_it, "train")
+    weights = perceptron.run_perceptron(train_dataset, max_it, "train")
+    perceptron.test(test_dataset, weights)
+    perceptron.test(validation_dataset, weights)
 
 
 def execute_wine(aux, perceptron, seed, max_it):
@@ -47,7 +49,9 @@ def execute_wine(aux, perceptron, seed, max_it):
         ])
     (train_dataset, test_dataset, validation_dataset) = aux.divide_dataset(
         wine_data, 0.7, 0.15, 0.15, seed)
-    perceptron.run_perceptron(train_dataset, max_it, "train")
+    weights = perceptron.run_perceptron(train_dataset, max_it, "train")
+    perceptron.test(test_dataset, weights)
+    perceptron.test(validation_dataset, weights)
 
 
 if __name__ == "__main__":
