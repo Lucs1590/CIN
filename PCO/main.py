@@ -6,12 +6,23 @@ class AuxiliaryClass(object):
     def __init__(self):
         ...
 
+    def generate_population(self, numb_particles):
+        ...
+
 
 class PSOClass(object):
     def __init__(self):
+        self.aux = AuxiliaryClass()
+
+    def runPSO(self):
         ...
 
-    def generate_population(self, numb_particles):
+
+class ACOClass(object):
+    def __init__(self):
+        self.aux = AuxiliaryClass()
+
+    def run_ACO(self):
         ...
 
 
