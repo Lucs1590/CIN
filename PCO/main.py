@@ -31,17 +31,17 @@ class PSOClass(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def runPSO(self, particles, max_it, AC1, AC2, v_min, v_max, dimensions):
+    def runPSO(self, flocks, max_it, AC1, AC2, v_min, v_max, dimensions):
         x = 0
         it = 0
-        particles = self.aux.generate_population(particles, dimensions)
-        speeds = self.generate_speed(v_min, v_max)
+        flocks = self.aux.generate_population(flocks, dimensions)
+        speeds = self.generate_speed(flocks, v_min, v_max)
 
         while it < max_it:
 
             i = 0
-            while i < len(particles):
-                curr_particle = particles[i]
+            while i < len(flocks):
+                curr_particle = flocks[i]
                 best_optimal_indv = 0  # definir o melhor valor de todos que a particula já teve
                 curr_optimal_indv = 0  # definir o melhor valor até hoje
 
@@ -49,7 +49,7 @@ class PSOClass(object):
                 if aux.fx(best_optimal_indv) > aux.fx(curr_optimal_indv):
                     curr_optimal_indv = best_optimal_indv
 
-                neighbors = get_neighbors(curr_particle, particles)
+                neighbors = get_neighbors(curr_particle, flocks)
                 best_neighbor = get_best_neightbor(neighbors)
 
                 for neighbor in neighbors:
@@ -62,8 +62,21 @@ class PSOClass(object):
 
             it += 1
 
-    def generate_speed(self, v_min, v_max):
-        return uniform(v_min, v_max)
+    def generate_speed(self, flock, v_min, v_max):
+        flocks_speeds = []
+        idx_1 = 0
+
+        while idx_1 < len(flock):
+            speeds = []
+            idx_2 = 0
+
+            while idx_2 < len(flock[idx_1]):
+                speeds.append(uniform(v_min, v_max))
+                idx_2 += 1
+            flocks_speeds.append(speeds)
+            idx_1 += 1
+
+        return flocks_speeds
 
     def get_neighbors(self, curr_particle, flock):
         ...
