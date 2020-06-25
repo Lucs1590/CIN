@@ -8,6 +8,10 @@ class AuxiliaryClass(object):
     def __init__(self):
         ...
 
+    def define_seed(self, _seed=time()):
+        print("Seed: ", _seed)
+        seed(_seed)
+
     def generate_population(self, indiv_number, dimensions):
         populations = []
         i = 0
@@ -22,9 +26,8 @@ class AuxiliaryClass(object):
 
         return populations
 
-    def define_seed(self, _seed=time()):
-        print("Seed: ", _seed)
-        seed(_seed)
+    def func_cost(self, x, y):
+        return (1 - x)**2 + 100*(y - x**2)**2
 
 
 class PSOClass(object):
@@ -36,6 +39,7 @@ class PSOClass(object):
         it = 0
         flocks = self.aux.generate_population(flocks, dimensions)
         speeds = self.generate_speed(flocks, v_min, v_max)
+        aptitudes = self.calculate_aptitudes(flocks)
 
         while it < max_it:
 
@@ -77,6 +81,9 @@ class PSOClass(object):
             idx_1 += 1
 
         return flocks_speeds
+
+    def calculate_aptitudes(self, flocks):
+        ...
 
     def get_neighbors(self, curr_particle, flock):
         ...
