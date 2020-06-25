@@ -34,26 +34,25 @@ class PSOClass(object):
     def __init__(self):
         self.aux = AuxiliaryClass()
 
-    def runPSO(self, flocks, max_it, AC1, AC2, v_min, v_max, dimensions):
+    def runPSO(self, particles, max_it, AC1, AC2, v_min, v_max, dimensions):
         x = 0
         it = 0
-        flocks = self.aux.generate_population(flocks, dimensions)
+        best_optimals = []
+        best_aptitude_indv = [0] * particles
+
+        flocks = self.aux.generate_population(particles, dimensions)
         speeds = self.generate_speed(flocks, v_min, v_max)
-        aptitudes = self.calculate_aptitudes(flocks)
+        aptitudes = self.calculate_aptitudes(flocks, dimensions)
 
         while it < max_it:
 
             i = 0
-            while i < len(flocks):
-                curr_particle = flocks[i]
-                best_optimal_indv = 0  # definir o melhor valor de todos que a particula já teve
-                curr_optimal_indv = 0  # definir o melhor valor até hoje
+            while i < len(flocks[0]):
+                best_aptitude_indv[i] = aptitudes[i] if \
+                    aptitudes[i] < best_aptitude_indv[i] else \
+                    best_aptitude_indv[i]
 
-                # colocar os valores comparados na função de aptidão
-                if aux.fx(best_optimal_indv) > aux.fx(curr_optimal_indv):
-                    curr_optimal_indv = best_optimal_indv
-
-                neighbors = get_neighbors(curr_particle, flocks)
+                neighbors = get_neighbors(flocks, i)
                 best_neighbor = get_best_neightbor(neighbors)
 
                 for neighbor in neighbors:
@@ -82,10 +81,16 @@ class PSOClass(object):
 
         return flocks_speeds
 
-    def calculate_aptitudes(self, flocks):
-        ...
+    def calculate_aptitudes(self, flocks, dimensions):
+        aptitudes = []
+        i = 0
 
-    def get_neighbors(self, curr_particle, flock):
+        while i < len(flocks[0]):
+            aptitudes.append(self.aux.func_cost(flocks[0][i], flocks[1][i]))
+            i += 1
+        return aptitudes
+
+    def get_neighbors(self, flock, index):
         ...
 
     def get_best_neightbor(self, neighbors):
