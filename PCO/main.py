@@ -48,11 +48,10 @@ class PSOClass(object):
 
             i = 0
             while i < len(flocks[0]):
-                best_aptitude_indv[i] = aptitudes[i] if \
-                    aptitudes[i] < best_aptitude_indv[i] else \
-                    best_aptitude_indv[i]
+                best_aptitude_indv[i] = self.get_best_indv_apt(
+                    best_aptitude_indv, aptitudes, i)
 
-                neighbors = get_neighbors(flocks, i)
+                neighbors = self.get_neighbors(flocks, i)
                 best_neighbor = get_best_neightbor(neighbors)
 
                 for neighbor in neighbors:
@@ -61,7 +60,7 @@ class PSOClass(object):
                         best_neighbor = optimal_of_neighbor
                 i += 1
 
-                speeds = self.update_speeds()
+            speeds = self.update_speeds(v_min, v_max)
 
             it += 1
 
@@ -90,13 +89,44 @@ class PSOClass(object):
             i += 1
         return aptitudes
 
+    def get_best_indv_apt(self, best_aptitude, aptitudes, index):
+        return aptitudes[index] if aptitudes[index] < best_aptitude[index] else best_aptitude[index]
+
     def get_neighbors(self, flock, index):
-        ...
+        neighbors_x = []
+        neighbors_y = []
+
+        if index == 0:
+            neighbors_x.append(flock[0][-1])
+            neighbors_y.append(flock[1][-1])
+
+            neighbors_x.append(flock[0][index + 1])
+            neighbors_y.append(flock[1][index + 1])
+        elif (index == len(flock[0]) - 1):
+            neighbors_x.append(flock[0][0])
+            neighbors_y.append(flock[1][0])
+
+            neighbors_x.append(flock[0][index - 1])
+            neighbors_y.append(flock[1][index - 1])
+        else:
+            neighbors_x.append(flock[0][index - 1])
+            neighbors_y.append(flock[1][index - 1])
+
+            neighbors_x.append(flock[0][index + 1])
+            neighbors_y.append(flock[1][index + 1])
+
+        return [neighbors_x, neighbors_y]
 
     def get_best_neightbor(self, neighbors):
         ...
 
-    def update_speeds(self):
+    def update_speeds(self, v_min, v_max):
+        speed = 0
+        while self.validate_speed(speed, v_min, v_max):
+            self.update_speeds()
+        ...
+
+    def validate_speed(self, speed, v_min, v_max):
         ...
 
 
