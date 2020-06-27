@@ -19,7 +19,7 @@ class AuxiliaryClass(object):
             population = []
 
             for individual in range(indiv_number):
-                population.append(uniform(-5, 5))
+                population.append(uniform(0, 0.001))
 
             populations.append(population)
             i += 1
@@ -37,8 +37,8 @@ class PSOClass(object):
     def runPSO(self, particles, max_it, AC1, AC2, v_min, v_max, dimensions):
         x = 0
         it = 0
-        best_optimals = []
         best_aptitude_indv = [0] * particles
+        best_neighbor = [0] * particles
 
         flocks = self.aux.generate_population(particles, dimensions)
         speeds = self.generate_speed(flocks, v_min, v_max)
@@ -52,15 +52,13 @@ class PSOClass(object):
                     best_aptitude_indv, aptitudes, i)
 
                 neighbors = self.get_neighbors(flocks, i)
-                best_neighbor = get_best_neightbor(neighbors)
+                best_neighbor[i] = flocks[0].index(
+                    self.get_best_neightbor(neighbors)[0])
 
-                for neighbor in neighbors:
-                    optimal_of_neighbor = 0  # aplicar função de apitidão aqui onde ta 0
-                    if aux.fx(optimal_of_neighbor) > aux.fx(best_neighbor):
-                        best_neighbor = optimal_of_neighbor
+                speeds = self.update_speeds(v_min, v_max, AC1, AC2, flocks)
+                flocks = self.update_movement(flocks, speeds, i)
+
                 i += 1
-
-            speeds = self.update_speeds(v_min, v_max)
 
             it += 1
 
@@ -118,7 +116,9 @@ class PSOClass(object):
         return [neighbors_x, neighbors_y]
 
     def get_best_neightbor(self, neighbors):
-        ...
+        return neighbors[0] \
+            if self.aux.func_cost(neighbors[0][0], neighbors[0][1]) < self.aux.func_cost(neighbors[1][0], neighbors[1][1])\
+            else neighbors[1]
 
     def update_speeds(self, v_min, v_max):
         speed = 0
@@ -128,6 +128,11 @@ class PSOClass(object):
 
     def validate_speed(self, speed, v_min, v_max):
         ...
+
+    def update_movement(self, flocks, speeds, index):
+        flocks[0][index] = flocks[0][index] + speeds[0][index]
+        flocks[1][index] = flocks[1][index] + speeds[1][index]
+        return flocks
 
 
 class ACOClass(object):
