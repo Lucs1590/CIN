@@ -39,6 +39,9 @@ class PSOClass(object):
         it = 0
         best_aptitude_indv = [0] * particles
         best_neighbor = [0] * particles
+        flocks_history = []
+        speeds_history = []
+        aptitudes_history = []
 
         flocks = self.aux.generate_population(particles, dimensions)
         speeds = self.generate_speed(flocks, v_min, v_max)
@@ -48,6 +51,7 @@ class PSOClass(object):
 
             i = 0
             while i < len(flocks[0]):
+                # ver a possibilidade de mudar de best_aptitude_indv para aptitudes
                 best_aptitude_indv[i] = self.get_best_indv_apt(
                     best_aptitude_indv, aptitudes, i)
 
@@ -55,12 +59,19 @@ class PSOClass(object):
                 best_neighbor[i] = flocks[0].index(
                     self.get_best_neightbor(neighbors)[0])
 
-                speeds = self.update_speeds(v_min, v_max, AC1, AC2, flocks)
+                speeds = self.update_speeds(
+                    v_min, v_max, speeds, flocks, AC1, AC2, i)
                 flocks = self.update_movement(flocks, speeds, i)
 
                 i += 1
 
+            flocks_history.append(flocks)
+            speeds_history.append(speeds)
+            # dar append em aptitude ou best_aptitude_indiv
+            aptitudes_history.append()
             it += 1
+
+        return flocks_history, speeds_history, aptitudes_history
 
     def generate_speed(self, flock, v_min, v_max):
         flocks_speeds = []
@@ -120,14 +131,16 @@ class PSOClass(object):
             if self.aux.func_cost(neighbors[0][0], neighbors[0][1]) < self.aux.func_cost(neighbors[1][0], neighbors[1][1])\
             else neighbors[1]
 
-    def update_speeds(self, v_min, v_max):
-        speed = 0
-        while self.validate_speed(speed, v_min, v_max):
-            self.update_speeds()
-        ...
+    def update_speeds(self, v_min, v_max, speeds, flocks, AC1, AC2, index):
+        # Fazer a atualização de velocidades speeds[0][index]
+        while self.speed_limit(speeds, v_min, v_max, index):
+            self.update_speeds(v_min, v_max, speeds, flocks, AC1, AC2, index)
+        return speeds
 
-    def validate_speed(self, speed, v_min, v_max):
-        ...
+    def speed_limit(self, speeds, v_min, v_max, index):
+        return False \
+            if v_min <= speeds[0][index] <= v_max and v_min <= speeds[1][index] <= v_max \
+            else True
 
     def update_movement(self, flocks, speeds, index):
         flocks[0][index] = flocks[0][index] + speeds[0][index]
