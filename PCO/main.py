@@ -50,8 +50,10 @@ class PSOClass(object):
         while it < max_it:
 
             i = 0
+            aptitudes = self.calculate_aptitudes(flocks, dimensions)
+            aptitudes_history.append(aptitudes)
+
             while i < len(flocks[0]):
-                # ver a possibilidade de mudar de best_aptitude_indv para aptitudes
                 best_aptitude_indv[i] = self.get_best_indv_apt(
                     best_aptitude_indv, aptitudes, i)
 
@@ -67,8 +69,6 @@ class PSOClass(object):
 
             flocks_history.append(flocks)
             speeds_history.append(speeds)
-            # dar append em aptitude ou best_aptitude_indiv
-            aptitudes_history.append()
             it += 1
 
         return flocks_history, speeds_history, aptitudes_history
