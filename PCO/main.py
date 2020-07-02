@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from random import uniform, seed
+from random import uniform, seed, random
 from time import time
 
 
@@ -62,7 +62,7 @@ class PSOClass(object):
                     self.get_best_neightbor(neighbors)[0])
 
                 speeds = self.update_speeds(
-                    v_min, v_max, speeds, flocks, AC1, AC2, i)
+                    v_min, v_max, speeds, flocks, best_neighbor[i], best_aptitude_indv[i], AC1, AC2, i)
                 flocks = self.update_movement(flocks, speeds, i)
 
                 i += 1
@@ -127,20 +127,27 @@ class PSOClass(object):
         return [neighbors_x, neighbors_y]
 
     def get_best_neightbor(self, neighbors):
-        return neighbors[0] \
+        return [neighbors[0][0], neighbors[1][0]] \
             if self.aux.func_cost(neighbors[0][0], neighbors[0][1]) < self.aux.func_cost(neighbors[1][0], neighbors[1][1])\
-            else neighbors[1]
+            else [neighbors[0][1], neighbors[1][1]]
 
-    def update_speeds(self, v_min, v_max, speeds, flocks, AC1, AC2, index):
-        # Fazer a atualização de velocidades speeds[0][index]
-        while self.speed_limit(speeds, v_min, v_max, index):
-            self.update_speeds(v_min, v_max, speeds, flocks, AC1, AC2, index)
+    def update_speeds(self, v_min, v_max, speeds, flocks, best_neighbor, best_apt, AC1, AC2, index):
+        speeds[0][index] = (speeds[0][index]) + (random() * AC1) * (best_apt - flocks[0][index]) + (
+            random() * AC2) * (best_apt - flocks[0][index])
+        speeds[1][index] = speeds[1][index] + (random() * AC1) * (best_apt - flocks[1][index]) + (
+            random() * AC2) * (best_apt - flocks[1][index])
+
+        speeds[0][index] = self.speed_limit(speeds[0], v_min, v_max, index)
+        speeds[1][index] = self.speed_limit(speeds[1], v_min, v_max, index)
         return speeds
 
     def speed_limit(self, speeds, v_min, v_max, index):
-        return False \
-            if v_min <= speeds[0][index] <= v_max and v_min <= speeds[1][index] <= v_max \
-            else True
+        if speeds[index] < v_min:
+            return v_min
+        elif speeds[index] > v_max:
+            return v_max
+        else:
+            return speeds[index]
 
     def update_movement(self, flocks, speeds, index):
         flocks[0][index] = flocks[0][index] + speeds[0][index]
