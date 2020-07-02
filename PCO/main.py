@@ -2,6 +2,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 from random import uniform, seed, random
 from time import time
+from functools import reduce
+import operator
+import pandas as pd
 
 
 class AuxiliaryClass(object):
@@ -29,6 +32,25 @@ class AuxiliaryClass(object):
     def func_cost(self, x, y):
         return (1 - x)**2 + 100*(y - x**2)**2
 
+    def plot_poits(self,
+                   data_1,
+                   data_2,
+                   title="Custo e Resultado",
+                   label_1="Custo",
+                   label_2="Soluções"
+                   ):
+        df = pd.DataFrame({"custo": data_1, "resultado": data_2})
+        plt.subplot(211)
+        plt.plot("custo", data=df, color="red")
+        plt.title(title)
+        plt.ylabel(label_1)
+
+        plt.subplot(212)
+        plt.plot("resultado", data=df, color="green")
+        plt.xlabel("Interações")
+        plt.ylabel(label_2)
+        plt.show()
+
 
 class PSOClass(object):
     def __init__(self):
@@ -41,17 +63,16 @@ class PSOClass(object):
         best_neighbor = [0] * particles
         flocks_history = []
         speeds_history = []
-        aptitudes_history = []
+        min_aptitudes = []
+        avg_aptitudes = []
 
         flocks = self.aux.generate_population(particles, dimensions)
         speeds = self.generate_speed(flocks, v_min, v_max)
-        aptitudes = self.calculate_aptitudes(flocks, dimensions)
 
         while it < max_it:
-
             i = 0
+
             aptitudes = self.calculate_aptitudes(flocks, dimensions)
-            aptitudes_history.append(aptitudes)
 
             while i < len(flocks[0]):
                 best_aptitude_indv[i] = self.get_best_indv_apt(
@@ -62,16 +83,29 @@ class PSOClass(object):
                     self.get_best_neightbor(neighbors)[0])
 
                 speeds = self.update_speeds(
-                    v_min, v_max, speeds, flocks, best_neighbor[i], best_aptitude_indv[i], AC1, AC2, i)
+                    v_min, v_max, speeds, flocks, best_aptitude_indv[best_neighbor[i]], best_aptitude_indv[i], AC1, AC2, i)
                 flocks = self.update_movement(flocks, speeds, i)
 
                 i += 1
 
             flocks_history.append(flocks)
             speeds_history.append(speeds)
+            avg_aptitudes.append(
+                (reduce(operator.add, aptitudes)/len(aptitudes)))
+            min_aptitudes.append(min(aptitudes))
             it += 1
 
-        return flocks_history, speeds_history, aptitudes_history
+        finished_time = time()
+        best_values = flocks_history[min_aptitudes.index(min(min_aptitudes))]
+
+        self.aux.plot_poits(min_aptitudes,
+                            avg_aptitudes,
+                            "Aptidão Min. e Aptidão Média",
+                            "Aptidão Min.",
+                            "Aptidão Média"
+                            )
+
+        return min(best_values[0]), min(best_values[1]), round(self.aux.func_cost(min(best_values[0]), min(best_values[1])), 2), finished_time
 
     def generate_speed(self, flock, v_min, v_max):
         flocks_speeds = []
@@ -133,9 +167,9 @@ class PSOClass(object):
 
     def update_speeds(self, v_min, v_max, speeds, flocks, best_neighbor, best_apt, AC1, AC2, index):
         speeds[0][index] = (speeds[0][index]) + (random() * AC1) * (best_apt - flocks[0][index]) + (
-            random() * AC2) * (best_apt - flocks[0][index])
+            random() * AC2) * (best_neighbor - flocks[0][index])
         speeds[1][index] = speeds[1][index] + (random() * AC1) * (best_apt - flocks[1][index]) + (
-            random() * AC2) * (best_apt - flocks[1][index])
+            random() * AC2) * (best_neighbor - flocks[1][index])
 
         speeds[0][index] = self.speed_limit(speeds[0], v_min, v_max, index)
         speeds[1][index] = self.speed_limit(speeds[1], v_min, v_max, index)
@@ -171,8 +205,14 @@ def main():
     aux.define_seed()
 
     start_time = time()
-    pso.runPSO(n_indiv, max_it, AC1, AC2, v_min, v_max, dimensions)
-    print("Tempo: ", time() - start_time)
+    (best_x, best_y, cost, end_time) = pso.runPSO(
+        n_indiv, max_it, AC1, AC2, v_min, v_max, dimensions)
+
+    exec_time = end_time - start_time
+    print("Tempo: ", exec_time)
+    print("Individuo (X): ", best_x)
+    print("Individuo (Y): ", best_y)
+    print("f(x,y): ", cost)
 
 
 if __name__ == "__main__":
