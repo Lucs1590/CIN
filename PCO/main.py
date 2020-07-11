@@ -59,6 +59,7 @@ class PSOClass(object):
     def runPSO(self, particles, max_it, AC1, AC2, v_min, v_max, dimensions):
         x = 0
         it = 0
+        it_repeat = 0
         best_aptitude_indv = [0] * particles
         best_neighbor = [0] * particles
         flocks_history = []
@@ -72,7 +73,23 @@ class PSOClass(object):
         while it < max_it:
             i = 0
 
+            if (it > 2):
+                it_repeat += 1 if (avg_aptitudes[-1]
+                                   == avg_aptitudes[-2]) else 0
+
+            if (it_repeat == round(max_it/3)):
+                print("(GN) Motivo de parada: Sem melhorias!")
+                break
+
             aptitudes = self.calculate_aptitudes(flocks, dimensions)
+
+            i_x = next(
+                ('break' for elem in flocks[0] if elem > 5 or elem < -5), None)
+            i_y = next(
+                ('break' for elem in flocks[1] if elem > 5 or elem < -5), None)
+            if i_x or i_y:
+                print("(GN) Motivo de parada: Individuo superou o limite!")
+                break
 
             while i < len(flocks[0]):
                 best_aptitude_indv[i] = self.get_best_indv_apt(
@@ -201,7 +218,7 @@ def main():
     aux = AuxiliaryClass()
     pso = PSOClass()
     (n_indiv, max_it, AC1, AC2, v_min, v_max, dimensions) = (
-        8, 500, 2.05, 2.05, 64, 96, 2)
+        8, 500, 2.05, 2.05, 0, 5, 2)
     aux.define_seed()
 
     start_time = time()
