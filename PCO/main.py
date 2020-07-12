@@ -218,7 +218,7 @@ def main():
     aux = AuxiliaryClass()
     pso = PSOClass()
     (n_indiv, max_it, AC1, AC2, v_min, v_max, dimensions) = (
-        8, 500, 2.05, 2.05, 0, 5, 2)
+        20, 500, 2.05, 2.05, 0, 1, 2)
     aux.define_seed()
 
     start_time = time()
