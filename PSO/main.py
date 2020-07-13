@@ -206,14 +206,6 @@ class PSOClass(object):
         return flocks
 
 
-class ACOClass(object):
-    def __init__(self):
-        self.aux = AuxiliaryClass()
-
-    def run_ACO(self):
-        ...
-
-
 def main():
     aux = AuxiliaryClass()
     pso = PSOClass()
