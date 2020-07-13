@@ -218,8 +218,8 @@ def main():
     aux = AuxiliaryClass()
     pso = PSOClass()
     (n_indiv, max_it, AC1, AC2, v_min, v_max, dimensions) = (
-        20, 500, 2.05, 2.05, 0, 1, 2)
-    aux.define_seed()
+        100, 500, 2.05, 2.05, 0, 1, 2)
+    aux.define_seed(1594592620.2156134)
 
     start_time = time()
     (best_x, best_y, cost, end_time) = pso.runPSO(
