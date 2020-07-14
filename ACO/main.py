@@ -3,8 +3,9 @@ from random import uniform, seed, random
 
 import tsplib95
 import pandas as pd
+import matplotlib.pyplot as plt
+
 # import numpy as np
-# import matplotlib.pyplot as plt
 
 # from functools import reduce
 # import operator
@@ -19,6 +20,11 @@ class Auxiliary(object):
         print("Seed: ", _seed)
         seed(_seed)
 
+    def plot_cities(self, cities):
+        cities.columns = ["width", "height"]
+        plt.scatter(cities.width, cities.height)
+        plt.title("Initial Graph")
+        plt.show()
 
 class ACO(object):
     def __init__(self):
@@ -32,9 +38,11 @@ def main():
     aux = Auxiliary()
     aco = ACO()
 
+    cities = aux.read_file("ACO/berlin52.tsp")
+    aux.plot_cities(cities)
+
     aux.define_seed()
     start_time = time()
-    cities = aux.read_file("ACO/berlin52.tsp")
 
     end_time = 0
 
