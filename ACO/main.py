@@ -34,7 +34,7 @@ def main():
 
     aux.define_seed()
     start_time = time()
-    aa = aux.read_file("ACO/berlin52.tsp")
+    cities = aux.read_file("ACO/berlin52.tsp")
 
     end_time = 0
 
