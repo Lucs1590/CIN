@@ -35,7 +35,7 @@ class Auxiliary(object):
         tingling = []
         while idx < num_ants:
             chosen = cities.sample(1)
-            tingling.append(chosen.values)
+            tingling.append([chosen])
             cities = cities.drop(chosen.index)
             idx += 1
         return tingling
@@ -52,6 +52,13 @@ class Auxiliary(object):
         list_number /= np.sum(np_list_number)
         return list(list_number)
 
+    def upgrade_total_distance(self, total_distance, total_distance_it):
+        idx = 0
+        while idx < len(total_distance):
+            total_distance[idx] = total_distance[idx] + total_distance_it[idx]
+            idx += 1
+        return total_distance
+
 
 class ACO(object):
     def __init__(self):
@@ -60,7 +67,6 @@ class ACO(object):
     def run_ACO(self, max_it, alpha, beta, evaporation, num_ants, cities, Q, initial_pheromone, elitist):
         it = 0
         best_solution = []
-        min_ways = []
 
         self.problem = self.aux.read_original_file("ACO/berlin52.tsp")
         self.pheromone_way = {}
@@ -74,8 +80,14 @@ class ACO(object):
             tingling = self.aux.define_tingling(num_ants, cities)
 
             while idx < len(cities)-1:
-                best_solution, pheromone_ways = self.move_ants(
-                    tingling, pheromone_ways, alpha, beta)
+                best_solution, total_distance_it, pheromone_ways = self.choose_next_city(
+                    cities, tingling, pheromone_ways, alpha, beta)
+
+                tingling = self.move_ants(tingling, best_solution)
+
+                ants_distance = self.aux.upgrade_total_distance(
+                    ants_distance, total_distance_it)
+                
                 idx += 1
 
             best_solution = self.compare_solutions()
@@ -89,23 +101,34 @@ class ACO(object):
 
         return end_time, best_sequence, best_it
 
-    def move_ants(self, ants, pheromone_ways, alpha, beta):
+    def choose_next_city(self, cities, ants, pheromone_ways, alpha, beta):
         idx = 0
+        moves = []
+        total_distance = []
 
         while idx < len(ants):
             curr_ant = ants[idx]
+
             probability = self.get_probability_move(
                 curr_ant, pheromone_ways, alpha, beta)
+
             probability = self.aux.divide_by_total_sum(probability)
+            next_move_idx = probability.index(max(probability)) + 1
+
+            moves.append(cities.loc[next_move_idx, ])
+
+            total_distance.append(self.aux.get_euclidean_distance_and_comb(
+                curr_ant[-1].values.tolist()[0], self.problem.node_coords[next_move_idx])[1])
 
             idx += 1
-        return 0, self.pheromone_way
+        return moves, total_distance, self.pheromone_way
 
     def get_probability_move(self, ant, pheromone_ways, alpha, beta):
         idx = 0
         curr_ant_probabilities = []
-        ant = ant.tolist()[0]
+        ant = ant[-1].values.tolist()[0]
 
+        # nesse while vai ter algo das cidades ja visitadas
         while idx < len(list(self.problem.get_nodes())):
             next_move_idx = list(self.problem.get_edges())[idx][1]
             next_move_coord = self.problem.node_coords[next_move_idx]
@@ -121,6 +144,8 @@ class ACO(object):
                 probability = (
                     self.pheromone_way[combination] ** alpha) * (visibility**beta)
                 curr_ant_probabilities.append(probability)
+            else:
+                curr_ant_probabilities.append(0)
 
             idx += 1
 
@@ -133,6 +158,13 @@ class ACO(object):
             self.pheromone_way[combination] = pheromone
         else:
             self.pheromone_way = pheromone
+
+    def move_ants(self, tingling, best_solution):
+        idx = 0
+        while idx < len(tingling):
+            tingling[idx].append(best_solution[idx].to_frame().T)
+            idx += 1
+        return tingling
 
 
 def main():
