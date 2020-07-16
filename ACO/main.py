@@ -8,10 +8,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-# from functools import reduce
-# import operator
-
-
 class Auxiliary(object):
     def read_file(self, path):
         _file = self.read_original_file(path)
@@ -59,6 +55,9 @@ class Auxiliary(object):
             idx += 1
         return total_distance
 
+    def plot_last_way(self, sequence):
+        ...
+
 
 class ACO(object):
     def __init__(self):
@@ -81,7 +80,7 @@ class ACO(object):
             ants_distance = [0] * num_ants
             tingling = self.aux.define_tingling(num_ants, cities)
 
-            while idx < 7:
+            while idx < (len(cities) - 1):
                 best_solution, total_distance_it, pheromone_ways = self.choose_next_city(
                     cities, tingling, pheromone_ways, alpha, beta)
 
@@ -133,7 +132,6 @@ class ACO(object):
 
         ant = ant[-1].values.tolist()[0]
 
-        # nesse while vai ter algo das cidades ja visitadas
         while idx < len(list(self.problem.get_nodes())):
             next_move_idx = list(self.problem.get_edges())[idx][1]
             next_move_coord = self.problem.node_coords[next_move_idx]
@@ -214,7 +212,7 @@ def main():
     start_time = time()
 
     (end_time, best_distances, best_sequences) = aco.run_ACO(
-        3, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
+        2, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
 
     exec_time = end_time - start_time
 
