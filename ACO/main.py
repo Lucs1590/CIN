@@ -67,6 +67,8 @@ class ACO(object):
     def run_ACO(self, max_it, alpha, beta, evaporation, num_ants, cities, Q, initial_pheromone, elitist):
         it = 0
         best_solution = []
+        best_distances = []
+        best_sequences = []
 
         self.problem = self.aux.read_original_file("ACO/berlin52.tsp")
         self.pheromone_way = {}
@@ -79,7 +81,7 @@ class ACO(object):
             ants_distance = [0] * num_ants
             tingling = self.aux.define_tingling(num_ants, cities)
 
-            while idx < len(cities)-1:
+            while idx < 7:
                 best_solution, total_distance_it, pheromone_ways = self.choose_next_city(
                     cities, tingling, pheromone_ways, alpha, beta)
 
@@ -90,16 +92,17 @@ class ACO(object):
 
                 idx += 1
 
-            best_solution = self.compare_solutions()
-            self.upgrade_ways()
+            pheromone_ways = self.upgrade_pheromone(
+                tingling, pheromone_ways, initial_pheromone, Q, ants_distance, elitist, evaporation)
+
+            best_distances.append(min(ants_distance))
+            best_sequences.append(
+                tingling[ants_distance.index(min(ants_distance))])
 
             it += 1
 
         end_time = time()
-        best_sequence = min(min_ways)
-        best_it = min_ways.index(best_sequence)
-
-        return end_time, best_sequence, best_it
+        return end_time, best_distances, best_sequences
 
     def choose_next_city(self, cities, ants, pheromone_ways, alpha, beta):
         idx = 0
@@ -167,6 +170,37 @@ class ACO(object):
             tingling[idx].append(best_solution[idx].to_frame().T)
             idx += 1
         return tingling
+
+    def upgrade_pheromone(self, tingling, pheromone_ways, sustained_pheromone, Q, ants_distance, n_elitist_ants, evaporation):
+        idx_1 = 0
+        while idx_1 < len(tingling):
+            curr_ant = tingling[idx_1]
+            idx_2 = 0
+
+            while idx_2 < len(curr_ant) - 1:
+                curr_route = curr_ant[idx_2]
+                next_route = curr_ant[idx_2 + 1]
+
+                excreted_pheromone = Q / ants_distance[idx_1]
+
+                eitist_pheromone = self.verify_better_way(
+                    ants_distance[idx_1], ants_distance, n_elitist_ants, excreted_pheromone)
+
+                coordenates = self.aux.get_euclidean_distance_and_comb(
+                    curr_route.values.tolist()[0], next_route.values.tolist()[0])[0]
+
+                pheromone_ways[coordenates] = (
+                    1-evaporation) * sustained_pheromone + excreted_pheromone + eitist_pheromone
+
+                idx_2 += 1
+
+            idx_1 += 1
+        return pheromone_ways
+
+    def verify_better_way(self, curr_distance, all_distances, n_elitist_ants, pheromone):
+        if curr_distance == min(all_distances):
+            return pheromone * n_elitist_ants
+        return 0
 
 
 def main():
