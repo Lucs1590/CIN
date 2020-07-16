@@ -56,10 +56,11 @@ class Auxiliary(object):
         return total_distance
 
     def plot_last_way(self, sequence):
-        x_numbs = list(map(lambda x: x[0].values[0], sequence))
-        y_numbs = list(map(lambda x: x[1].values[0], sequence))
+        x_numbs = list(map(lambda x: x.values[0][0], sequence))
+        y_numbs = list(map(lambda y: y.values[0][1], sequence))
         plt.plot(x_numbs, y_numbs, '-o', markerfacecolor='green',
                  markeredgecolor='green')
+        plt.title("Final Graph")
         plt.show()
 
     def plot_weights(self, weights):
@@ -80,7 +81,7 @@ class ACO(object):
         best_distances = []
         best_sequences = []
 
-        self.problem = self.aux.read_original_file("ACO/berlin52.tsp")
+        self.problem = self.aux.read_original_file("berlin52.tsp")
         self.pheromone_way = {}
 
         pheromone_ways = initial_pheromone
@@ -216,19 +217,19 @@ def main():
     aux = Auxiliary()
     aco = ACO()
 
-    cities = aux.read_file("ACO/berlin52.tsp")
+    cities = aux.read_file("berlin52.tsp")
     aux.plot_cities(cities)
 
     aux.define_seed()
     start_time = time()
 
     (end_time, best_distances, best_sequences) = aco.run_ACO(
-        2, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
+        3, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
 
     exec_time = end_time - start_time
 
-    aux.plot_last_way(best_sequences[-1])
     aux.plot_weights(best_distances)
+    aux.plot_last_way(best_sequences[-1])
 
     print("Tempo: ", exec_time)
     print("Peso do último melhor caminho: ", best_distances[-1])
