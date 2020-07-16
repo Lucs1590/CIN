@@ -1,5 +1,5 @@
 from time import time
-from random import uniform, seed, random
+from random import seed
 
 import tsplib95
 
@@ -56,7 +56,18 @@ class Auxiliary(object):
         return total_distance
 
     def plot_last_way(self, sequence):
-        ...
+        x_numbs = list(map(lambda x: x[0].values[0], sequence))
+        y_numbs = list(map(lambda x: x[1].values[0], sequence))
+        plt.plot(x_numbs, y_numbs, '-o', markerfacecolor='green',
+                 markeredgecolor='green')
+        plt.show()
+
+    def plot_weights(self, weights):
+        plt.plot(range(len(weights)), weights)
+        plt.title('Distancias')
+        plt.xlabel('Interações')
+        plt.ylabel('Distancia')
+        plt.show()
 
 
 class ACO(object):
@@ -206,7 +217,7 @@ def main():
     aco = ACO()
 
     cities = aux.read_file("ACO/berlin52.tsp")
-    # aux.plot_cities(cities)
+    aux.plot_cities(cities)
 
     aux.define_seed()
     start_time = time()
@@ -216,7 +227,9 @@ def main():
 
     exec_time = end_time - start_time
 
-    aux.plot_last_way(best_sequences[1])
+    aux.plot_last_way(best_sequences[-1])
+    aux.plot_weights(best_distances)
+
     print("Tempo: ", exec_time)
     print("Peso do último melhor caminho: ", best_distances[-1])
     print("Último melhor caminho:", best_sequences[-1])
