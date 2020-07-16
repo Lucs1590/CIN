@@ -2,10 +2,11 @@ from time import time
 from random import uniform, seed, random
 
 import tsplib95
+
 import pandas as pd
 import matplotlib.pyplot as plt
+import numpy as np
 
-# import numpy as np
 
 # from functools import reduce
 # import operator
@@ -39,22 +40,32 @@ class Auxiliary(object):
             idx += 1
         return tingling
 
-    def get_euclidean_distance(self, ant, next_move_coord):
+    def get_euclidean_distance_and_comb(self, ant, next_move_coord):
         curr_ant_coord = (ant[0], ant[1])
         next_coord = (next_move_coord[0], next_move_coord[1])
-        return tsplib95.distances.euclidean(curr_ant_coord, next_coord)
+        combination = str(curr_ant_coord[0]) + "x" + str(
+            curr_ant_coord[1]) + "x" + str(next_coord[0]) + "x" + str(next_coord[1])
+        return combination, tsplib95.distances.euclidean(curr_ant_coord, next_coord)
+
+    def divide_by_total_sum(self, list_number):
+        np_list_number = np.array(list_number)
+        list_number /= np.sum(np_list_number)
+        return list(list_number)
 
 
 class ACO(object):
     def __init__(self):
         self.aux = Auxiliary()
 
-    def run_ACO(self, max_it, num_ants, pheromone, cities):
+    def run_ACO(self, max_it, alpha, beta, evaporation, num_ants, cities, Q, initial_pheromone, elitist):
         it = 0
         best_solution = []
         min_ways = []
 
         self.problem = self.aux.read_original_file("ACO/berlin52.tsp")
+        self.pheromone_way = {}
+
+        pheromone_ways = initial_pheromone
 
         while it < max_it:
             idx = 0
@@ -63,7 +74,8 @@ class ACO(object):
             tingling = self.aux.define_tingling(num_ants, cities)
 
             while idx < len(cities)-1:
-                best_solution = self.move_ants(tingling)
+                best_solution, pheromone_ways = self.move_ants(
+                    tingling, pheromone_ways, alpha, beta)
                 idx += 1
 
             best_solution = self.compare_solutions()
@@ -77,16 +89,19 @@ class ACO(object):
 
         return end_time, best_sequence, best_it
 
-    def move_ants(self, ants):
+    def move_ants(self, ants, pheromone_ways, alpha, beta):
         idx = 0
 
         while idx < len(ants):
             curr_ant = ants[idx]
-            probability = self.get_probability_move(curr_ant)
+            probability = self.get_probability_move(
+                curr_ant, pheromone_ways, alpha, beta)
+            probability = self.aux.divide_by_total_sum(probability)
 
             idx += 1
+        return 0, self.pheromone_way
 
-    def get_probability_move(self, ant):
+    def get_probability_move(self, ant, pheromone_ways, alpha, beta):
         idx = 0
         curr_ant_probabilities = []
         ant = ant.tolist()[0]
@@ -94,16 +109,30 @@ class ACO(object):
         while idx < len(list(self.problem.get_nodes())):
             next_move_idx = list(self.problem.get_edges())[idx][1]
             next_move_coord = self.problem.node_coords[next_move_idx]
+
             if ant != next_move_coord:
-                distance = self.aux.get_euclidean_distance(
+                (combination, distance) = self.aux.get_euclidean_distance_and_comb(
                     ant, next_move_coord)
 
+                # se não tiver a chave com (and,next_move) em pheromone_ways adicionar
+                self.pheromone_way_validation(pheromone_ways, combination)
+
                 visibility = 1/distance
-                curr_ant_probabilities = ...
+                probability = (
+                    self.pheromone_way[combination] ** alpha) * (visibility**beta)
+                curr_ant_probabilities.append(probability)
 
             idx += 1
 
         return curr_ant_probabilities
+
+    def pheromone_way_validation(self, pheromone, combination):
+        if isinstance(pheromone, float):
+            self.pheromone_way[combination] = pheromone
+        elif combination not in pheromone.keys():
+            self.pheromone_way[combination] = pheromone
+        else:
+            self.pheromone_way = pheromone
 
 
 def main():
@@ -116,7 +145,8 @@ def main():
     aux.define_seed()
     start_time = time()
 
-    (end_time, best_sequence, it) = aco.run_ACO(500, len(cities), 0.4, cities)
+    (end_time, best_sequence, it) = aco.run_ACO(
+        3, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
 
     exec_time = end_time - start_time
 
