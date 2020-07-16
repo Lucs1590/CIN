@@ -213,15 +213,15 @@ def main():
     aux.define_seed()
     start_time = time()
 
-    (end_time, best_sequence, it) = aco.run_ACO(
+    (end_time, best_distances, best_sequences) = aco.run_ACO(
         3, 1, 5, 0.5, len(cities), cities, 100, 0.000_001, 5)
 
     exec_time = end_time - start_time
 
-    aux.plot_cities(best_sequence)
+    aux.plot_last_way(best_sequences[1])
     print("Tempo: ", exec_time)
-    print("Melhor caminho: ", best_sequence)
-    print("Nº da Interação:", it)
+    print("Peso do último melhor caminho: ", best_distances[-1])
+    print("Último melhor caminho:", best_sequences[-1])
 
 
 if __name__ == "__main__":
