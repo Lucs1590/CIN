@@ -87,7 +87,7 @@ class ACO(object):
 
                 ants_distance = self.aux.upgrade_total_distance(
                     ants_distance, total_distance_it)
-                
+
                 idx += 1
 
             best_solution = self.compare_solutions()
@@ -126,6 +126,8 @@ class ACO(object):
     def get_probability_move(self, ant, pheromone_ways, alpha, beta):
         idx = 0
         curr_ant_probabilities = []
+        idx_list = list(map(lambda x: x.index.values.tolist()[0], ant))
+
         ant = ant[-1].values.tolist()[0]
 
         # nesse while vai ter algo das cidades ja visitadas
@@ -133,7 +135,7 @@ class ACO(object):
             next_move_idx = list(self.problem.get_edges())[idx][1]
             next_move_coord = self.problem.node_coords[next_move_idx]
 
-            if ant != next_move_coord:
+            if ant != next_move_coord and next_move_idx not in idx_list:
                 (combination, distance) = self.aux.get_euclidean_distance_and_comb(
                     ant, next_move_coord)
 
