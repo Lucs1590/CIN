@@ -1,7 +1,3 @@
----
-marp: false
----
-
 # Search methods
 Aqui nos foi proposto a realização de um trabalho que trabalhasse com os algoritimos **simulated annealing** e **hill climbing**, além de ser possivel realizar variações dos mesmos.
 

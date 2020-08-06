@@ -1,4 +1,4 @@
-# Genetic Algorithm
+# Algoritmo Genético
 
 Aqui nos foi proposto um trabalho que trabalhasse com **Algoritmos Genéticos**, sendo ele dividido em quatro questões.
 
