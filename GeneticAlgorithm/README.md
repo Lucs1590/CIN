@@ -2,6 +2,8 @@
 
 Aqui nos foi proposto um trabalho que trabalhasse com **Algoritmos Genéticos**, sendo ele dividido em quatro questões.
 
+Além disso, nesse repositorio encontram-se dois algoritmos, sendo um deles voltado para um problema unidimensional e outro para bidimensional.
+
 ---
 
 1) Implemente um Algoritmo Genético para o exemplo de reconhecimento de padrões apresentado em aula. Em vez de reconhecer o número 1 seu algoritmo deve reconhecer o número 0, representado pela bitstring [1 1 1 1 0 1 1 0 1 1 1 1].Teste diferentes taxas de crossover e mutação e compare os resultados. Faça experimentos apenas com crossover e apenas com mutação e compare também os resultados.
@@ -15,3 +17,14 @@ Dica: você também pode aplicar Subida da Colina e Recozimento Simulado em uma 
 
 Além de uma boa aptidão, é desejável que o algoritmo tenha uma convergência rápida, portanto registre também o número de iterações e tempo que os algoritmos demoram para convergir, dados os valores atribuídos aos parâmetros.
 Para cada experimento, inclua em seu relatório gráficos que mostrem o valor mínimo e médio da função de aptidão ao longo das iterações.
+
+
+### Pré-requisito
+ - Python3
+
+### Execução
+Execute o seguinte comando para rodar em seu computador:
+```bash
+$ python3 genetic.py
+$ python3 genetic_two_dimensions.py
+```
