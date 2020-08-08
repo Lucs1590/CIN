@@ -1,7 +1,5 @@
 from sklearn import datasets
 import matplotlib.pyplot as plt
-import pandas as pd
-from sklearn.cluster import KMeans
 
 iris = datasets.load_wine()
 X = iris.data
