@@ -76,3 +76,12 @@ Simulated Annealing
 |---------------------|---------------------|--------------------|
 | Hill Climbing       | 0.10019150787713275 | 0.9999727897822276 |
 | Simulated Annealing | 0.10020041028989954 | 0.999970201234957  |
+
+### Pré-requisito
+ - Python3
+
+### Execução
+Execute o seguinte comando para rodar em seu computador:
+```bash
+$ python3 search_methods.py
+```
