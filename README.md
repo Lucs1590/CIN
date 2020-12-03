@@ -8,6 +8,6 @@ Aqui foram colocados os algoritmos dos seguintes temas:
  - [**Kmeans**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/Kmeans)
  - [**PCO**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/PSO)
  - [**Rede Neural**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/Neural)
- - [**Simulater Annealing**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/HillClimbing_SimulatedAnnealing)
+ - [**Simulated Annealing**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/HillClimbing_SimulatedAnnealing)
  
  Qualquer duvida, entre em contato com [lucasbsilva29@gmail.com](mailto:lucasbsilva29@gmail.com).
