@@ -11,3 +11,5 @@ Aqui foram colocados os algoritmos dos seguintes temas:
  - [**Simulated Annealing**](https://github.com/Lucs1590/Computacao-Inspirada-pela-Natureza/tree/master/HillClimbing_SimulatedAnnealing)
  
  Qualquer duvida, entre em contato com [lucasbsilva29@gmail.com](mailto:lucasbsilva29@gmail.com).
+
+**OBS.: Este repositório está arquivado, sendo assim, será utilizado apenas para consultas. Espero que te ajude! ;)**
